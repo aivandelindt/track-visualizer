@@ -1,5 +1,6 @@
 const DEFAULT_DATA_URL = "output/tracklist_analysis.json";
 const ANALYZE_ENDPOINT = "/api/analyze";
+const TRACKS_ENDPOINT = "/api/tracks";
 
 const filters = [
   { id: "all", label: "All" },
@@ -29,6 +30,8 @@ const state = {
     fileCount: 0,
     mode: "sample",
   },
+  queryTimer: null,
+  backendQueryEnabled: true,
 };
 
 const elements = {};
@@ -75,7 +78,7 @@ function cacheElements() {
 function attachEvents() {
   elements.searchInput.addEventListener("input", (event) => {
     state.search = event.target.value.trim().toLowerCase();
-    applyFilters();
+    scheduleFilterApply();
   });
 
   elements.folderInput.addEventListener("change", handleFolderSelection);
@@ -92,7 +95,25 @@ function attachEvents() {
 
 async function loadDefaultData() {
   setFolderSelectionSummary("Bundled sample JSON", 0, true);
-  setAnalysisStatus("Loading bundled analysis JSON...", "idle");
+  setAnalysisStatus("Loading track library...", "idle");
+
+  try {
+    const payload = await fetchTracksFromApi();
+    setTracks(payload.tracks || [], {
+      label: payload.source?.label || TRACKS_ENDPOINT,
+      folder: payload.source?.folder || "Bundled sample JSON",
+      genre: payload.source?.genre || elements.genreSelect.value,
+      fileCount: payload.source?.fileCount || (payload.tracks || []).length,
+      mode: payload.source?.mode || "sample",
+    });
+    setAnalysisStatus(
+      `Loaded ${state.tracks.length} tracks from TinyDB-backed library.`,
+      "success",
+    );
+    return;
+  } catch {
+    state.backendQueryEnabled = false;
+  }
 
   try {
     const response = await fetch(DEFAULT_DATA_URL);
@@ -183,6 +204,7 @@ async function handleAnalyzeClick() {
       fileCount: payload.source?.fileCount || state.pendingFiles.length,
       mode: "uploaded",
     });
+    await applyFilters();
     setAnalysisStatus(
       `Analyzed ${payload.source?.fileCount || state.pendingFiles.length} files from ${payload.source?.folder || getFolderName(state.pendingFiles)}.`,
       "success",
@@ -245,10 +267,10 @@ function renderFilters() {
     .join("");
 
   elements.filterRow.querySelectorAll(".filter-btn").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       state.filter = button.dataset.filter;
       renderFilters();
-      applyFilters();
+      await applyFilters();
     });
   });
 }
@@ -263,7 +285,47 @@ function renderCompatibilityLegend() {
     .join("");
 }
 
-function applyFilters() {
+function scheduleFilterApply() {
+  if (state.queryTimer) {
+    clearTimeout(state.queryTimer);
+  }
+
+  state.queryTimer = setTimeout(() => {
+    applyFilters();
+  }, 180);
+}
+
+async function applyFilters() {
+  if (state.backendQueryEnabled) {
+    try {
+      const previousSelection = state.filteredTracks[state.selectedIndex]?.file;
+      const payload = await fetchTracksFromApi({
+        search: state.search,
+        filter: state.filter,
+      });
+      state.filteredTracks = payload.tracks || [];
+
+      if (state.filteredTracks.length === 0) {
+        state.selectedIndex = 0;
+        renderEmptyState();
+        return;
+      }
+
+      const selectedIndex = state.filteredTracks.findIndex(
+        (track) => track.file === previousSelection,
+      );
+      state.selectedIndex = selectedIndex >= 0 ? selectedIndex : 0;
+      renderDashboard();
+      return;
+    } catch {
+      state.backendQueryEnabled = false;
+      setAnalysisStatus(
+        "Realtime TinyDB queries unavailable; using local filtering mode.",
+        "idle",
+      );
+    }
+  }
+
   state.filteredTracks = state.tracks.filter((track) => {
     const matchesSearch = !state.search || searchTrack(track, state.search);
     const matchesFilter = matchesPreset(track, state.filter);
@@ -281,6 +343,24 @@ function applyFilters() {
   }
 
   renderDashboard();
+}
+
+async function fetchTracksFromApi({ search = "", filter = "all" } = {}) {
+  const params = new URLSearchParams();
+  if (search) {
+    params.set("search", search);
+  }
+  if (filter && filter !== "all") {
+    params.set("filter", filter);
+  }
+
+  const url = params.toString() ? `${TRACKS_ENDPOINT}?${params.toString()}` : TRACKS_ENDPOINT;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+
+  return response.json();
 }
 
 function renderDashboard() {

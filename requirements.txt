@@ -3,3 +3,4 @@ librosa
 numpy
 mutagen
 tqdm
+tinydb

@@ -2,6 +2,8 @@
 
 Deck-style visualizer for Beatport tracklist analysis JSON. The dashboard reads `output/tracklist_analysis.json` by default and can re-run analysis from a selected audio folder through the local `server.py` bridge.
 
+`server.py` now persists the active track library in TinyDB (`output/track_cache.json`) and serves filtered/searchable results through `GET /api/tracks`.
+
 ## What it shows
 
 - Track library with search and energy filters
@@ -44,6 +46,21 @@ http://127.0.0.1:8000/index.html
 4. Click **Analyze selection**.
 
 The browser sends the selected files to `server.py`, which writes them to a temporary input folder, runs `analyze.py`, and returns the refreshed track JSON to the UI.
+The server also replaces the TinyDB track table with those results, so subsequent search/filter operations query the stored library.
+
+## TinyDB query endpoint
+
+When served through `server.py`, the dashboard uses:
+
+- `GET /api/tracks` - return full stored library (seeded from bundled JSON on first request)
+- `GET /api/tracks?search=<text>&filter=<id>` - query TinyDB by free-text and filter id
+
+Supported filter ids match the UI controls:
+
+- `all`
+- `high-energy`
+- `trancey`
+- `slow-burn`
 
 ## Repository layout
 
