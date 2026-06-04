@@ -452,11 +452,68 @@ p {
 .chart-shell {
   margin-top: 16px;
   padding: 14px;
+  height: 320px;
   border-radius: var(--radius-lg);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
     radial-gradient(circle at 50% 0%, rgba(242, 162, 58, 0.12), transparent 42%);
   border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+#energyChart {
+  flex: 1;
+}
+
+.marker-timeline {
+  position: relative;
+  margin-top: 12px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.marker-block {
+  position: absolute;
+  height: 100%;
+  min-width: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-family: var(--mono);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  border-radius: 2px;
+}
+
+.marker-block:hover {
+  opacity: 0.85;
+}
+
+.marker-block.marker-block-drop {
+  background: rgba(242, 162, 58, 0.6);
+}
+
+.marker-block.marker-block-peak_section {
+  background: rgba(76, 215, 165, 0.6);
+}
+
+.marker-block.marker-block-build_up {
+  background: rgba(94, 120, 255, 0.6);
+}
+
+.marker-block.marker-block-build_down {
+  background: rgba(240, 90, 188, 0.6);
+}
+
+.marker-block.marker-block-breakdown {
+  background: rgba(240, 109, 95, 0.6);
 }
 
 .cue-strip {

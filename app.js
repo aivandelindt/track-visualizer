@@ -697,6 +697,35 @@ function renderChart(track) {
       },
     ],
   });
+
+  renderMarkerTimeline(track);
+}
+
+function renderMarkerTimeline(track) {
+  const timelineEl = document.getElementById("markerTimeline");
+  if (!timelineEl) {
+    return;
+  }
+
+  const markers = (track.structure_markers || []).sort((a, b) => Number(a.time) - Number(b.time));
+  const duration = track.duration_sec || 1;
+
+  timelineEl.innerHTML = markers
+    .map((marker) => {
+      const startPercent = (Number(marker.time) / duration) * 100;
+      const endPercent = marker.end_time ? (Number(marker.end_time) / duration) * 100 : startPercent + 1.5;
+      const widthPercent = Math.max(1, endPercent - startPercent);
+      const label = marker.type.replace(/_/g, " ").split(" ").map((w) => w.charAt(0).toUpperCase()).join("");
+
+      return `
+        <div
+          class="marker-block marker-block-${marker.type}"
+          style="left:${startPercent.toFixed(2)}%;width:${widthPercent.toFixed(2)}%"
+          title="${marker.type.replace(/_/g, ' ')} @ ${formatSeconds(marker.time)}${marker.end_time ? ` - ${formatSeconds(marker.end_time)}` : ''}"
+        >${label}</div>
+      `;
+    })
+    .join("");
 }
 
 function drawStructureOverlay(chart, markers) {
@@ -747,6 +776,11 @@ function renderEmptyState() {
   elements.cueStrip.innerHTML = "";
   elements.markerCount.textContent = "0 markers";
   elements.trackCount.textContent = `0 of ${state.tracks.length} tracks`;
+
+  const timelineEl = document.getElementById("markerTimeline");
+  if (timelineEl) {
+    timelineEl.innerHTML = "";
+  }
 
   if (state.chart) {
     state.chart.destroy();
