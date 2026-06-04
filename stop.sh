@@ -26,7 +26,7 @@ if [[ -f "$PID_FILE" ]]; then
   rm -f "$PID_FILE"
 fi
 
-mapfile -t fallback_pids < <(pgrep -f "server\.py" || true)
+mapfile -t fallback_pids < <(pgrep -f "$ROOT_DIR/server\.py" || true)
 for pid in "${fallback_pids[@]}"; do
   if stop_pid "$pid"; then
     continue

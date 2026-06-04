@@ -1,0 +1,5 @@
+audioread
+librosa
+numpy
+mutagen
+tqdm

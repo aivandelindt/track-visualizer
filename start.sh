@@ -6,9 +6,38 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUN_DIR="$ROOT_DIR/.run"
 PID_FILE="$RUN_DIR/visualizer.pid"
 LOG_FILE="$RUN_DIR/visualizer.log"
+VENV_DIR="$ROOT_DIR/.venv"
+REQ_FILE="$ROOT_DIR/requirements.txt"
+REQ_STAMP_FILE="$RUN_DIR/requirements.installed"
 URL="${VISUALIZER_URL:-http://127.0.0.1:8000/index.html}"
 
 mkdir -p "$RUN_DIR"
+
+base_python="${PYTHON_BIN:-}"
+if [[ -z "$base_python" ]]; then
+  if command -v python3 >/dev/null 2>&1; then
+    base_python="python3"
+  else
+    base_python="python"
+  fi
+fi
+
+if [[ ! -x "$VENV_DIR/bin/python" ]]; then
+  "$base_python" -m venv "$VENV_DIR"
+fi
+
+venv_python="$VENV_DIR/bin/python"
+
+if [[ ! -f "$REQ_FILE" ]]; then
+  echo "Missing $REQ_FILE. Cannot set up virtual environment dependencies."
+  exit 1
+fi
+
+if [[ ! -f "$REQ_STAMP_FILE" || "$REQ_FILE" -nt "$REQ_STAMP_FILE" ]]; then
+  "$venv_python" -m pip install --upgrade pip
+  "$venv_python" -m pip install -r "$REQ_FILE"
+  touch "$REQ_STAMP_FILE"
+fi
 
 find_listening_pid() {
   if command -v lsof >/dev/null 2>&1; then
@@ -45,16 +74,7 @@ if [[ -n "$listening_pid" ]]; then
   exit 1
 fi
 
-python_bin="${PYTHON_BIN:-}"
-if [[ -z "$python_bin" ]]; then
-  if command -v python3 >/dev/null 2>&1; then
-    python_bin="python3"
-  else
-    python_bin="python"
-  fi
-fi
-
-nohup "$python_bin" "$ROOT_DIR/server.py" >"$LOG_FILE" 2>&1 &
+nohup "$venv_python" "$ROOT_DIR/server.py" >"$LOG_FILE" 2>&1 &
 server_pid=$!
 echo "$server_pid" >"$PID_FILE"
 

@@ -60,3 +60,11 @@ The browser sends the selected files to `server.py`, which writes them to a temp
 - The UI prefers the bundled JSON on first load so it works immediately over HTTP.
 - Folder analysis requires running through `server.py`; the static page does not execute Python directly.
 - On macOS, `start.sh` opens the dashboard automatically after starting the server.
+
+## Todo
+
+- Add more cue types and structure markers to the JSON and UI
+- Implement energy trend chart with D3 or Chart.js
+- Enhance mix recommendations with more detailed compatibility scoring
+- Improve mobile responsiveness and touch interactions
+- Add error handling and status messaging for the analysis workflow
