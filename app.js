@@ -443,6 +443,7 @@ function renderTrackList() {
       const isActive = index === state.selectedIndex;
       const firstDrop = firstDropTime(track);
       const markers = track.structure_markers || [];
+      const camelotClr = camelotColor(track.camelot);
       return `
         <article class="track-card ${isActive ? "is-active" : ""}" data-index="${index}">
           <div class="track-topline">
@@ -450,7 +451,7 @@ function renderTrackList() {
               <h3 class="track-name">${escapeHtml(track.title)}</h3>
               <p class="track-artist">${escapeHtml(track.artist)}</p>
             </div>
-            <span class="track-chip">${track.camelot} · ${track.bpm.toFixed(1)} BPM</span>
+            <span class="track-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${track.camelot} · ${track.bpm.toFixed(1)} BPM</span>
           </div>
           <div class="track-tags">
             <span class="track-chip">Energy ${track.avg_energy_level}/10</span>
@@ -474,9 +475,10 @@ function renderTrackList() {
 function renderSelectedTrack(track) {
   elements.selectedTitle.textContent = track.title;
   elements.selectedArtist.textContent = track.artist;
+  const camelotClr = camelotColor(track.camelot);
   elements.selectedBadges.innerHTML = [
-    `<span class="pill pill-accent">${track.camelot}</span>`,
-    `<span class="pill pill-good">${track.key}</span>`,
+    `<span class="pill" style="background:${camelotClr.bg};color:${camelotClr.text}">${track.camelot}</span>`,
+    `<span class="pill" style="background:${camelotClr.bg};color:${camelotClr.text};opacity:0.85">${track.key}</span>`,
     `<span class="pill pill-warn">${track.bpm.toFixed(1)} BPM</span>`,
   ].join("");
 
@@ -581,9 +583,10 @@ function renderMarkers(track) {
   elements.markerList.innerHTML = markers
     .map((marker) => {
       const label = marker.type.replace(/_/g, " ");
+      const clr = markerColor(marker.type);
       return `
-        <div class="marker-item">
-          <div class="marker-type">${label}</div>
+        <div class="marker-item" style="border-color:${clr.stroke.replace("0.85", "0.25")};background:${clr.fill}">
+          <div class="marker-type" style="color:${clr.text}">${label}</div>
           <div class="marker-sub">${markerDescription(marker.type)}</div>
           <div class="marker-time">${formatSeconds(marker.time)}${marker.end_time ? ` - ${formatSeconds(marker.end_time)}` : ""}</div>
         </div>
@@ -843,39 +846,51 @@ function parseCamelot(camelot) {
   };
 }
 
+// Camelot System Wheel colors — hue follows the wheel's rainbow arc (12 o'clock → clockwise)
+const CAMELOT_COLORS = {
+  "1A":  { bg: "rgba(200, 35,  55,  0.16)", text: "#e88090" },
+  "1B":  { bg: "rgba(230, 48,  65,  0.16)", text: "#ff9ea8" },
+  "2A":  { bg: "rgba(195, 65,  30,  0.16)", text: "#e89a70" },
+  "2B":  { bg: "rgba(228, 85,  42,  0.16)", text: "#ffb07e" },
+  "3A":  { bg: "rgba(195, 125, 22,  0.16)", text: "#e8c870" },
+  "3B":  { bg: "rgba(222, 158, 32,  0.16)", text: "#ffe07c" },
+  "4A":  { bg: "rgba(152, 168, 22,  0.16)", text: "#d0dc60" },
+  "4B":  { bg: "rgba(188, 208, 28,  0.16)", text: "#eaf67c" },
+  "5A":  { bg: "rgba(82,  162, 32,  0.16)", text: "#90d870" },
+  "5B":  { bg: "rgba(102, 202, 52,  0.16)", text: "#a8ea70" },
+  "6A":  { bg: "rgba(32,  162, 102, 0.16)", text: "#58e0a8" },
+  "6B":  { bg: "rgba(42,  202, 132, 0.16)", text: "#68f2ba" },
+  "7A":  { bg: "rgba(32,  142, 182, 0.16)", text: "#58caf2" },
+  "7B":  { bg: "rgba(42,  172, 222, 0.16)", text: "#6ae0ff" },
+  "8A":  { bg: "rgba(62,  82,  202, 0.16)", text: "#889afc" },
+  "8B":  { bg: "rgba(82,  112, 242, 0.16)", text: "#a0beff" },
+  "9A":  { bg: "rgba(82,  52,  192, 0.16)", text: "#aa8af2" },
+  "9B":  { bg: "rgba(102, 72,  222, 0.16)", text: "#bca2ff" },
+  "10A": { bg: "rgba(122, 32,  182, 0.16)", text: "#ca6afa" },
+  "10B": { bg: "rgba(152, 42,  212, 0.16)", text: "#dc8aff" },
+  "11A": { bg: "rgba(172, 22,  142, 0.16)", text: "#e25aca" },
+  "11B": { bg: "rgba(202, 32,  162, 0.16)", text: "#ff72da" },
+  "12A": { bg: "rgba(192, 22,  92,  0.16)", text: "#e85aaa" },
+  "12B": { bg: "rgba(222, 32,  102, 0.16)", text: "#ff72bc" },
+};
+
+function camelotColor(camelot) {
+  const key = String(camelot || "").toUpperCase().trim();
+  return CAMELOT_COLORS[key] || { bg: "rgba(242, 162, 58, 0.14)", text: "#ffd79a" };
+}
+
+const MARKER_COLORS = {
+  drop:          { stroke: "rgba(242, 162,  58, 0.85)", fill: "rgba(242, 162,  58, 0.08)", text: "#ffd79a" },
+  peak_section:  { stroke: "rgba(76,  215, 165, 0.85)", fill: "rgba(76,  215, 165, 0.07)", text: "#9bf0ce" },
+  build_up:      { stroke: "rgba(94,  120, 255, 0.85)", fill: "rgba(94,  120, 255, 0.07)", text: "#a0b0ff" },
+  build_down:    { stroke: "rgba(240,  90, 188, 0.85)", fill: "rgba(240,  90, 188, 0.07)", text: "#f898d8" },
+  breakdown:     { stroke: "rgba(240, 109,  95, 0.85)", fill: "rgba(240, 109,  95, 0.06)", text: "#ffb1a8" },
+};
+
+const MARKER_COLORS_DEFAULT = { stroke: "rgba(184, 194, 204, 0.65)", fill: "rgba(184, 194, 204, 0.05)", text: "#c8d0d8" };
+
 function markerColor(type) {
-  if (type === "drop") {
-    return {
-      stroke: "rgba(242, 162, 58, 0.8)",
-      fill: "rgba(242, 162, 58, 0.08)",
-    };
-  }
-
-  if (type === "peak_section") {
-    return {
-      stroke: "rgba(76, 215, 165, 0.8)",
-      fill: "rgba(76, 215, 165, 0.06)",
-    };
-  }
-
-  if (type === "build_up") {
-    return {
-      stroke: "rgba(94, 120, 255, 0.82)",
-      fill: "rgba(94, 120, 255, 0.06)",
-    };
-  }
-
-  if (type === "breakdown") {
-    return {
-      stroke: "rgba(240, 109, 95, 0.82)",
-      fill: "rgba(240, 109, 95, 0.05)",
-    };
-  }
-
-  return {
-    stroke: "rgba(184, 194, 204, 0.65)",
-    fill: "rgba(184, 194, 204, 0.05)",
-  };
+  return MARKER_COLORS[type] || MARKER_COLORS_DEFAULT;
 }
 
 function markerDescription(type) {
