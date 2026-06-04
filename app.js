@@ -381,26 +381,46 @@ function renderDashboard() {
 function renderSummary() {
   const tracks = state.tracks;
   const totalDuration = tracks.reduce((sum, track) => sum + Number(track.duration_sec || 0), 0);
-  const averageBpm = average(tracks.map((track) => Number(track.bpm || 0)));
-  const averageEnergy = average(tracks.map((track) => Number(track.avg_energy_level || 0)));
+  const bpms = tracks.map((t) => Number(t.bpm || 0)).filter((v) => v > 0);
+  const energies = tracks.map((t) => Number(t.avg_energy_level || 0));
+  const averageBpm = average(bpms);
+  const averageEnergy = average(energies);
+  const bpmMin = bpms.length ? Math.min(...bpms) : 0;
+  const bpmMax = bpms.length ? Math.max(...bpms) : 0;
   const quickestDrop = Math.min(
     ...tracks.map((track) => firstDropTime(track)).filter((value) => Number.isFinite(value)),
   );
+  const totalCues = tracks.reduce((sum, t) => sum + (t.structure_markers || []).length, 0);
+  const uniqueKeys = new Set(tracks.map((t) => t.camelot).filter(Boolean)).size;
+  const totalMinutes = Math.round(totalDuration / 60);
+  const sourceLabel =
+    state.source.mode === "uploaded"
+      ? `${state.source.folder} · ${state.source.genre}`
+      : "Bundled sample JSON";
 
   const summaryItems = [
+    { label: "Tracks", value: `${tracks.length}`, meta: sourceLabel },
+    { label: "Avg BPM", value: `${averageBpm.toFixed(1)}`, meta: "Mean across library" },
     {
-      label: "Tracks",
-      value: `${tracks.length}`,
-      meta: state.source.mode === "uploaded" ? `${state.source.folder} · ${state.source.genre}` : "Bundled sample JSON",
+      label: "BPM Range",
+      value: bpms.length ? `${bpmMin.toFixed(0)}–${bpmMax.toFixed(0)}` : "n/a",
+      meta: "Min → Max",
     },
-    { label: "Avg BPM", value: `${averageBpm.toFixed(1)}`, meta: "Across entire library" },
-    { label: "Avg Energy", value: `${averageEnergy.toFixed(1)}/10`, meta: "Coarse mix intensity" },
+    { label: "Avg Energy", value: `${averageEnergy.toFixed(1)}/10`, meta: "Mix intensity" },
+    { label: "Total Length", value: `${totalMinutes} min`, meta: `${totalDuration.toFixed(0)}s raw` },
     {
       label: "Fastest Drop",
       value: Number.isFinite(quickestDrop) ? `${quickestDrop.toFixed(1)}s` : "n/a",
       meta: "Earliest cue point",
     },
+    { label: "Cue Points", value: `${totalCues}`, meta: "Structure markers" },
+    { label: "Keys", value: `${uniqueKeys}`, meta: "Unique Camelot positions" },
   ];
+
+  const summaryTitle = document.getElementById("summaryTitle");
+  if (summaryTitle) {
+    summaryTitle.textContent = `${tracks.length} track${tracks.length !== 1 ? "s" : ""} — TinyDB`;
+  }
 
   elements.summaryGrid.innerHTML = summaryItems
     .map(

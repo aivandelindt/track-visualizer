@@ -293,7 +293,7 @@ p {
 }
 
 .hero-grid {
-  grid-template-columns: 0.9fr 1.4fr;
+  grid-template-columns: 1fr;
 }
 
 .workspace-grid {
@@ -309,7 +309,7 @@ p {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 12px;
 }
 
@@ -365,6 +365,24 @@ p {
 .mini-wave span:nth-child(6) { height: 64px; }
 .mini-wave span:nth-child(7) { height: 28px; }
 .mini-wave span:nth-child(8) { height: 48px; }
+
+.summary-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.summary-header h2 {
+  margin-top: 8px;
+  font-size: clamp(1.2rem, 1.8vw, 2rem);
+  line-height: 1;
+}
 
 .deck-header,
 .library-controls,
@@ -685,9 +703,7 @@ p {
 }
 
 @media (max-width: 1200px) {
-  .hero-grid,
   .workspace-grid,
-  .summary-grid,
   .deck-metrics,
   .analysis-toolbar,
   .source-meta-row {
@@ -715,7 +731,6 @@ p {
     flex-direction: column;
   }
 
-  .hero-grid,
   .workspace-grid,
   .summary-grid,
   .deck-metrics,

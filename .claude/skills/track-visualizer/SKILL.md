@@ -1,17 +1,18 @@
 ---
 name: track-visualizer
 description: >
-  Create and extend a CDJ3000x-style track visualizer for Beatport analysis JSON.
-  Use when the user says “track visualizer”, “visualize tracklist_analysis.json”,
-  “CDJ3000x UI”, or asks how to extend the dashboard.
+  Create and extend a CDJ3000x-style track visualizer with TinyDB-backed
+  track storage/query and local folder-upload analysis via server.py. Use when
+  the user asks for track visualizer changes, CDJ3000x UI updates, TinyDB query
+  integration, or dashboard extensions for cues, filters, and recommendations.
 license: MIT
 metadata:
   author: dvandelindt
-  version: "1.1.0"
+  version: "1.2.0"
 allowed-tools:
   - Read
-  - Write
   - Edit
+  - Write
   - Bash
   - Browser
   - Questions
@@ -19,75 +20,114 @@ allowed-tools:
 
 # Track Visualizer
 
-Create or extend a CDJ3000x-style dashboard for Beatport tracklist analysis JSON,
-including the local folder-upload workflow backed by `server.py`.
+Create or extend a CDJ3000x-style dashboard for Beatport analysis JSON with
+server-backed analysis and TinyDB-backed querying.
 
 ## Inputs
 
 - `$request`: What to visualize, extend, or restyle
-- `$tracklist_json`: Path to the analysis JSON, usually `output/tracklist_analysis.json`
+- `$tracklist_json`: Path to analysis JSON, usually `output/tracklist_analysis.json`
 - `$audio_folder`: Optional folder of source audio files to analyze through the UI
 - `$genre`: Optional analyzer preset, usually `trance` or `techno`
-- `$output_dir`: Directory that should contain the UI files, usually the repo root
+- `$output_dir`: Directory containing UI/backend files, usually repo root
+- `$tinydb_path`: TinyDB file path, usually `output/track_cache.json`
 
 ## Goal
 
-Ship a polished deck-style dashboard that reads the analysis JSON, can trigger fresh analysis
-from a selected audio folder, renders track browsing, cue timing, energy trends, and mix
-recommendations, and validates cleanly in a browser. Use the same workflow when extending
-the visualizer with new cue types, filters, panels, or upload-driven analysis controls.
+Ship a polished deck-style dashboard that reads bundled JSON, can run fresh analysis
+from a selected audio folder through `server.py`, persists active tracks in TinyDB,
+supports searchable/filterable querying, and validates cleanly in a browser with no
+runtime/server errors.
 
 ## Steps
 
-### 1. Inspect the data shape
+### 1. Inspect data shape and backend flow
 
-Read the JSON and any summary artifacts to confirm the fields needed by the UI, especially
-`bpm`, `camelot`, `key`, `duration_sec`, `avg_energy_level`, `energy_levels`, and
-`structure_markers`. If the request mentions selecting a folder or re-running analysis,
-also inspect `server.py` and the `python analyze.py --input <FOLDER_WITH_TRACKS> --output <FOLDER_TO_WRITE_JSON> --genre trance`
-flow so the UI changes match the live backend path.
+Read the active analysis JSON and summary artifacts to confirm the fields used by UI
+and backend: `bpm`, `camelot`, `key`, `duration_sec`, `avg_energy_level`, `energy_levels`,
+`structure_markers`, `artist`, and `title`.
 
-**Success criteria**: You can name the fields the UI will use and identify the default track.
+Inspect `server.py` and `analyze.py` flow for:
+- `POST /api/analyze` upload handling
+- `python analyze.py --input <FOLDER> --output <DIR> --genre <preset>`
+- TinyDB persistence/query points (seed, replace, and filtered search)
 
-### 2. Design the CDJ-style layout
+If TinyDB behavior is being changed, consult Context7 TinyDB docs first and follow
+documented query/update patterns.
 
-Build or update `index.html`, `styles.css`, and `app.js` with a dark Pioneer-inspired aesthetic,
-a selected-track deck, a library rail, cue cards, an energy timeline chart, and when needed
-an analysis source panel for folder upload, preset selection, and status messaging.
+**Success criteria**: You can name the exact fields used and identify how default load
+and upload-driven analysis map into backend endpoints and TinyDB state.
 
-**Success criteria**: The page loads and the main panels are visibly present.
+### 2. Update visual layout and source controls
 
-### 3. Wire the interactions
+Update `index.html`, `styles.css`, and `app.js` while preserving the established dark
+CDJ/Pioneer visual language. Keep or extend:
+- selected-track deck
+- library rail
+- cue cards
+- energy timeline
+- source panel (folder select, preset, status)
 
-Add search, filters, track selection, harmonic compatibility, and structure markers. If the UI
-needs to analyze audio folders, route that flow through `server.py` and `POST /api/analyze`
-instead of trying to run Python directly from a static page. Keep the chart readable and place
-detailed cue text in a rail or card layout when labels would get crowded.
+Do not replace the visual theme unless explicitly requested.
 
-**Success criteria**: Selecting a track updates the deck, chart, and recommendations without a reload.
+**Success criteria**: The page loads with all major panels visible and source controls
+usable on desktop and mobile layouts.
 
-### 4. Validate in a browser
+### 3. Wire interactions and TinyDB-backed querying
 
-Serve the folder locally, open the page, and check the data fetch, layout, and interactivity in a browser.
-Use `python server.py` when validating folder upload or re-analysis so the browser can call the
-local analysis endpoint and still fall back to `output/tracklist_analysis.json` on first load.
+Implement or extend interactions for:
+- search
+- filters
+- track selection
+- recommendations
+- structure marker detail display
 
-**Success criteria**: The JSON loads over HTTP, the visualizer renders without runtime errors,
-and when requested a selected audio folder can be analyzed and reflected in the deck without a reload.
+Route folder analysis through `server.py` only (`POST /api/analyze`). Do not imply browser
+execution of `analyze.py`.
 
-### 5. Extend safely
+For querying:
+- prefer `GET /api/tracks` for search/filter against TinyDB
+- preserve bundled JSON fallback path for first load or endpoint unavailability
+- keep filter IDs aligned across UI and backend
 
-When adding new views, cue types, summary fields, or source controls, preserve the existing visual
-language, update the metadata cards and recommendation logic together, and re-run the browser check.
+**Success criteria**: Selecting/filtering/searching updates deck/chart/recommendations
+without reload, and server-backed querying works when endpoint is available.
 
-**Success criteria**: New fields appear consistently across the deck, list, chart, recommendation panels,
-and any folder-analysis status or source metadata surfaces.
+### 4. Persist and query track state in TinyDB
+
+Use TinyDB as the active track cache:
+- seed from bundled JSON when DB is empty
+- replace cached tracks after successful analysis runs
+- store source metadata (`folder`, `genre`, `mode`, `fileCount`, `updatedAt`)
+- sanitize internal helper fields before API response
+
+Use minimal schema additions and keep response shape compatible with current UI.
+
+**Success criteria**: `GET /api/tracks` returns valid JSON from TinyDB, filtered queries
+return expected subsets, and `output/track_cache.json` is created/updated.
+
+### 5. Validate end-to-end in browser and terminal
+
+Run local server startup and verify:
+- dashboard HTTP load works
+- no runtime/server errors
+- API smoke tests pass for both full and filtered queries
+- browser interaction reflects search/filter results correctly
+
+Validation checklist:
+- start or restart server
+- call `GET /api/tracks`
+- call `GET /api/tracks?search=<text>&filter=<id>`
+- open dashboard and test at least one search and one filter interaction
+
+**Success criteria**: JSON loads over HTTP, dashboard renders and updates correctly,
+TinyDB query path is active, and logs show successful endpoint calls.
 
 ## Rules
 
-- Prefer the existing visual language over introducing a new theme.
-- Use current Chart.js guidance before changing chart config or scale behavior.
-- Keep marker detail readable in the side rail instead of crowding the chart.
-- Preserve the bundled JSON load path even when adding upload-driven analysis.
-- Prefer the local `server.py` bridge for analyzer execution; do not imply that the browser can run `analyze.py` directly.
-- Make the smallest change that improves the visualizer, then validate it in the browser.
+- Preserve existing visual language and component structure unless user asks for a redesign.
+- Keep marker details readable in side rails/cards instead of overcrowding chart labels.
+- Preserve bundled JSON load path even when adding upload/TinyDB flows.
+- Use `server.py` bridge for analyzer execution; never suggest browser runs `analyze.py`.
+- Keep changes minimal and focused; avoid unrelated refactors.
+- Verify with both terminal API checks and browser interaction before finishing.
