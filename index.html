@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0d10" />
+    <title>CDJ3000x Track Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <main class="app-shell">
+      <header class="topbar panel">
+        <div>
+          <p class="eyebrow">PIONEER CDJ3000X // TRACK INTELLIGENCE</p>
+          <h1>Beatport Set Visualizer</h1>
+          <p class="lede">
+            Explore energy, harmonic compatibility, structural cue points, and on-demand analysis for your selected audio folder.
+          </p>
+        </div>
+        <div class="status-stack">
+          <div class="status-chip status-chip-accent">LIVE ANALYSIS</div>
+          <div class="status-chip">WAVEFORM // CUE // HARMONY</div>
+        </div>
+      </header>
+
+      <section class="panel source-panel">
+        <div class="source-copy-block">
+          <p class="deck-label">ANALYZE FOLDER</p>
+          <h2>Upload a deck source</h2>
+          <p class="source-copy">
+            Choose a folder of audio files, then run the existing analyzer with the trance or techno preset. The deck refreshes from the returned JSON without reloading the page.
+          </p>
+          <p class="source-command">python analyze.py --input &lt;FOLDER_WITH_TRACKS&gt; --output &lt;FOLDER_TO_WRITE_JSON&gt; --genre trance</p>
+        </div>
+
+        <div class="analysis-toolbar">
+          <label class="file-picker" for="folderInput">
+            <span>Select audio folder</span>
+            <input
+              id="folderInput"
+              type="file"
+              webkitdirectory
+              directory
+              multiple
+              accept=".mp3,.wav,.flac,.m4a,.aiff,.ogg"
+            />
+          </label>
+
+          <label class="genre-picker" for="genreSelect">
+            <span>Preset</span>
+            <select id="genreSelect">
+              <option value="trance" selected>Trance</option>
+              <option value="techno">Techno</option>
+            </select>
+          </label>
+
+          <button class="analyze-btn" id="analyzeButton" type="button" disabled>Analyze selection</button>
+        </div>
+
+        <div class="source-meta-row">
+          <div class="source-meta-card">
+            <div class="metric-label">Selection</div>
+            <div class="source-meta-value" id="folderLabel">Bundled sample JSON</div>
+          </div>
+          <div class="source-meta-card source-meta-card-wide">
+            <div class="metric-label">Status</div>
+            <p class="analysis-status" id="analysisStatus">Loaded bundled analysis JSON. Run the local server to analyze a selected folder.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="hero-grid">
+        <section class="panel summary-panel">
+          <div class="summary-grid" id="summaryGrid"></div>
+          <div class="mini-wave" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </section>
+
+        <section class="panel deck-panel">
+          <div class="deck-header">
+            <div>
+              <p class="deck-label">CURRENT DECK</p>
+              <h2 id="selectedTitle">Loading track...</h2>
+              <p class="deck-subtitle" id="selectedArtist"></p>
+            </div>
+            <div class="deck-badges" id="selectedBadges"></div>
+          </div>
+
+          <div class="deck-metrics" id="selectedMetrics"></div>
+
+          <div class="chart-shell">
+            <canvas id="energyChart" height="280"></canvas>
+          </div>
+
+          <div class="cue-strip" id="cueStrip"></div>
+        </section>
+      </section>
+
+      <section class="workspace-grid">
+        <aside class="panel library-panel">
+          <div class="library-controls">
+            <div>
+              <p class="deck-label">LIBRARY</p>
+              <h2 id="trackCount">0 tracks</h2>
+            </div>
+            <input id="searchInput" type="search" placeholder="Search artist, title, key, Camelot" />
+          </div>
+
+          <div class="filter-row" id="filterRow"></div>
+
+          <div class="track-list" id="trackList"></div>
+        </aside>
+
+        <section class="panel insight-panel">
+          <div class="insight-header">
+            <div>
+              <p class="deck-label">MIX RECOMMENDATIONS</p>
+              <h2>Compatibility rail</h2>
+            </div>
+            <div class="chip-group" id="compatibilityLegend"></div>
+          </div>
+
+          <div class="recommendations" id="recommendations"></div>
+
+          <div class="structure-panel">
+            <div class="structure-header">
+              <h3>Structure markers</h3>
+              <span id="markerCount"></span>
+            </div>
+            <div class="marker-list" id="markerList"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,3822 @@
+[
+  {
+    "file": "01. 999999999, FLKN - No Limit (Extended).m4a",
+    "artist": "999999999, FLKN",
+    "title": "No Limit (Extended)",
+    "duration_sec": 266.3,
+    "bpm": 76.0,
+    "camelot": "6B",
+    "key": "A# major",
+    "avg_energy_level": 6,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 8
+      },
+      {
+        "time": 10.0,
+        "level": 7
+      },
+      {
+        "time": 20.0,
+        "level": 5
+      },
+      {
+        "time": 30.0,
+        "level": 4
+      },
+      {
+        "time": 40.0,
+        "level": 7
+      },
+      {
+        "time": 50.0,
+        "level": 6
+      },
+      {
+        "time": 60.0,
+        "level": 7
+      },
+      {
+        "time": 70.0,
+        "level": 8
+      },
+      {
+        "time": 80.0,
+        "level": 7
+      },
+      {
+        "time": 90.0,
+        "level": 7
+      },
+      {
+        "time": 100.0,
+        "level": 8
+      },
+      {
+        "time": 110.0,
+        "level": 6
+      },
+      {
+        "time": 120.0,
+        "level": 7
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 6
+      },
+      {
+        "time": 150.0,
+        "level": 5
+      },
+      {
+        "time": 160.0,
+        "level": 4
+      },
+      {
+        "time": 170.0,
+        "level": 7
+      },
+      {
+        "time": 180.0,
+        "level": 5
+      },
+      {
+        "time": 190.0,
+        "level": 7
+      },
+      {
+        "time": 200.0,
+        "level": 8
+      },
+      {
+        "time": 210.0,
+        "level": 5
+      },
+      {
+        "time": 220.0,
+        "level": 7
+      },
+      {
+        "time": 230.0,
+        "level": 7
+      },
+      {
+        "time": 240.0,
+        "level": 6
+      },
+      {
+        "time": 250.0,
+        "level": 7
+      },
+      {
+        "time": 260.0,
+        "level": 5
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 13.1
+      },
+      {
+        "type": "drop",
+        "time": 44.1
+      },
+      {
+        "type": "drop",
+        "time": 75.1
+      },
+      {
+        "type": "drop",
+        "time": 99.8
+      },
+      {
+        "type": "drop",
+        "time": 124.1
+      },
+      {
+        "type": "build_down",
+        "time": 142.3,
+        "end_time": 146.4
+      },
+      {
+        "type": "drop",
+        "time": 174.2
+      },
+      {
+        "type": "drop",
+        "time": 205.1
+      },
+      {
+        "type": "drop",
+        "time": 225.4
+      },
+      {
+        "type": "build_down",
+        "time": 261.6,
+        "end_time": 265.8
+      }
+    ]
+  },
+  {
+    "file": "01. Armin van Buuren, Wippenberg, Hannah Laing - U Got 2 Know (Extended Mix).m4a",
+    "artist": "Armin van Buuren, Wippenberg, Hannah Laing",
+    "title": "U Got 2 Know (Extended Mix)",
+    "duration_sec": 307.9,
+    "bpm": 143.6,
+    "camelot": "4A",
+    "key": "F minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 5
+      },
+      {
+        "time": 10.0,
+        "level": 5
+      },
+      {
+        "time": 20.0,
+        "level": 6
+      },
+      {
+        "time": 30.0,
+        "level": 6
+      },
+      {
+        "time": 40.0,
+        "level": 8
+      },
+      {
+        "time": 50.0,
+        "level": 8
+      },
+      {
+        "time": 60.0,
+        "level": 8
+      },
+      {
+        "time": 70.0,
+        "level": 8
+      },
+      {
+        "time": 80.0,
+        "level": 9
+      },
+      {
+        "time": 90.0,
+        "level": 5
+      },
+      {
+        "time": 100.0,
+        "level": 3
+      },
+      {
+        "time": 110.0,
+        "level": 4
+      },
+      {
+        "time": 120.0,
+        "level": 5
+      },
+      {
+        "time": 130.0,
+        "level": 4
+      },
+      {
+        "time": 140.0,
+        "level": 6
+      },
+      {
+        "time": 150.0,
+        "level": 5
+      },
+      {
+        "time": 160.0,
+        "level": 8
+      },
+      {
+        "time": 170.0,
+        "level": 8
+      },
+      {
+        "time": 180.0,
+        "level": 8
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 7
+      },
+      {
+        "time": 210.0,
+        "level": 9
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 7
+      },
+      {
+        "time": 250.0,
+        "level": 9
+      },
+      {
+        "time": 260.0,
+        "level": 8
+      },
+      {
+        "time": 270.0,
+        "level": 8
+      },
+      {
+        "time": 280.0,
+        "level": 9
+      },
+      {
+        "time": 290.0,
+        "level": 9
+      },
+      {
+        "time": 300.0,
+        "level": 6
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 39.8
+      },
+      {
+        "type": "drop",
+        "time": 66.0
+      },
+      {
+        "type": "build_down",
+        "time": 90.7,
+        "end_time": 95.7
+      },
+      {
+        "type": "build_up",
+        "time": 116.8,
+        "end_time": 121.2
+      },
+      {
+        "type": "drop",
+        "time": 143.1
+      },
+      {
+        "type": "drop",
+        "time": 175.4
+      },
+      {
+        "type": "drop",
+        "time": 205.5
+      },
+      {
+        "type": "peak_section",
+        "time": 205.5,
+        "end_time": 244.8
+      },
+      {
+        "type": "build_down",
+        "time": 242.8,
+        "end_time": 246.9
+      },
+      {
+        "type": "drop",
+        "time": 250.0
+      },
+      {
+        "type": "drop",
+        "time": 278.0
+      },
+      {
+        "type": "peak_section",
+        "time": 278.0,
+        "end_time": 304.5
+      },
+      {
+        "type": "build_down",
+        "time": 302.5,
+        "end_time": 307.7
+      }
+    ]
+  },
+  {
+    "file": "01. CoCo Star, Mike Momburg - I Need A Miracle (Extended Mix).m4a",
+    "artist": "CoCo Star, Mike Momburg",
+    "title": "I Need A Miracle (Extended Mix)",
+    "duration_sec": 339.0,
+    "bpm": 143.6,
+    "camelot": "12B",
+    "key": "E major",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 8
+      },
+      {
+        "time": 10.0,
+        "level": 8
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 9
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 6
+      },
+      {
+        "time": 60.0,
+        "level": 5
+      },
+      {
+        "time": 70.0,
+        "level": 6
+      },
+      {
+        "time": 80.0,
+        "level": 7
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 9
+      },
+      {
+        "time": 110.0,
+        "level": 9
+      },
+      {
+        "time": 120.0,
+        "level": 9
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 10
+      },
+      {
+        "time": 160.0,
+        "level": 9
+      },
+      {
+        "time": 170.0,
+        "level": 7
+      },
+      {
+        "time": 180.0,
+        "level": 4
+      },
+      {
+        "time": 190.0,
+        "level": 5
+      },
+      {
+        "time": 200.0,
+        "level": 6
+      },
+      {
+        "time": 210.0,
+        "level": 7
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 10
+      },
+      {
+        "time": 240.0,
+        "level": 10
+      },
+      {
+        "time": 250.0,
+        "level": 9
+      },
+      {
+        "time": 260.0,
+        "level": 9
+      },
+      {
+        "time": 270.0,
+        "level": 9
+      },
+      {
+        "time": 280.0,
+        "level": 9
+      },
+      {
+        "time": 290.0,
+        "level": 9
+      },
+      {
+        "time": 300.0,
+        "level": 9
+      },
+      {
+        "time": 310.0,
+        "level": 8
+      },
+      {
+        "time": 320.0,
+        "level": 8
+      },
+      {
+        "time": 330.0,
+        "level": 5
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 13.9
+      },
+      {
+        "type": "peak_section",
+        "time": 27.0,
+        "end_time": 53.8
+      },
+      {
+        "type": "build_down",
+        "time": 49.9,
+        "end_time": 55.4
+      },
+      {
+        "type": "drop",
+        "time": 81.4
+      },
+      {
+        "type": "build_up",
+        "time": 85.4,
+        "end_time": 89.9
+      },
+      {
+        "type": "peak_section",
+        "time": 87.4,
+        "end_time": 119.4
+      },
+      {
+        "type": "drop",
+        "time": 120.2
+      },
+      {
+        "type": "peak_section",
+        "time": 120.2,
+        "end_time": 146.4
+      },
+      {
+        "type": "drop",
+        "time": 147.0
+      },
+      {
+        "type": "peak_section",
+        "time": 147.0,
+        "end_time": 173.6
+      },
+      {
+        "type": "build_down",
+        "time": 171.1,
+        "end_time": 175.3
+      },
+      {
+        "type": "drop",
+        "time": 173.6
+      },
+      {
+        "type": "drop",
+        "time": 201.8
+      },
+      {
+        "type": "peak_section",
+        "time": 214.8,
+        "end_time": 253.8
+      },
+      {
+        "type": "drop",
+        "time": 254.4
+      },
+      {
+        "type": "peak_section",
+        "time": 254.4,
+        "end_time": 279.0
+      },
+      {
+        "type": "peak_section",
+        "time": 280.1,
+        "end_time": 307.4
+      },
+      {
+        "type": "drop",
+        "time": 308.7
+      },
+      {
+        "type": "build_down",
+        "time": 331.8,
+        "end_time": 337.9
+      }
+    ]
+  },
+  {
+    "file": "01. Gigi D'Agostino - Bla Bla Bla (Original Mix).m4a",
+    "artist": "Gigi D'Agostino",
+    "title": "Bla Bla Bla (Original Mix)",
+    "duration_sec": 256.5,
+    "bpm": 136.0,
+    "camelot": "3A",
+    "key": "A# minor",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 3
+      },
+      {
+        "time": 10.0,
+        "level": 4
+      },
+      {
+        "time": 20.0,
+        "level": 4
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 9
+      },
+      {
+        "time": 60.0,
+        "level": 9
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 9
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 8
+      },
+      {
+        "time": 110.0,
+        "level": 8
+      },
+      {
+        "time": 120.0,
+        "level": 9
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 8
+      },
+      {
+        "time": 160.0,
+        "level": 8
+      },
+      {
+        "time": 170.0,
+        "level": 9
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 8
+      },
+      {
+        "time": 210.0,
+        "level": 6
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 7
+      },
+      {
+        "time": 250.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 29.6
+      },
+      {
+        "type": "peak_section",
+        "time": 29.6,
+        "end_time": 63.5
+      },
+      {
+        "type": "drop",
+        "time": 65.5
+      },
+      {
+        "type": "peak_section",
+        "time": 65.5,
+        "end_time": 99.6
+      },
+      {
+        "type": "drop",
+        "time": 103.5
+      },
+      {
+        "type": "peak_section",
+        "time": 118.3,
+        "end_time": 150.5
+      },
+      {
+        "type": "drop",
+        "time": 154.1
+      },
+      {
+        "type": "peak_section",
+        "time": 168.7,
+        "end_time": 197.1
+      },
+      {
+        "type": "drop",
+        "time": 197.3
+      },
+      {
+        "type": "drop",
+        "time": 219.0
+      },
+      {
+        "type": "peak_section",
+        "time": 219.0,
+        "end_time": 238.6
+      },
+      {
+        "type": "drop",
+        "time": 240.6
+      },
+      {
+        "type": "build_down",
+        "time": 243.6,
+        "end_time": 249.7
+      }
+    ]
+  },
+  {
+    "file": "01. Giuseppe Ottaviani, Gabry Ponte, Crooked Bangs - Astra (Extended Mix).m4a",
+    "artist": "Giuseppe Ottaviani, Gabry Ponte, Crooked Bangs",
+    "title": "Astra (Extended Mix)",
+    "duration_sec": 250.7,
+    "bpm": 143.6,
+    "camelot": "10B",
+    "key": "D major",
+    "avg_energy_level": 6,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 3
+      },
+      {
+        "time": 10.0,
+        "level": 3
+      },
+      {
+        "time": 20.0,
+        "level": 4
+      },
+      {
+        "time": 30.0,
+        "level": 3
+      },
+      {
+        "time": 40.0,
+        "level": 6
+      },
+      {
+        "time": 50.0,
+        "level": 10
+      },
+      {
+        "time": 60.0,
+        "level": 9
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 7
+      },
+      {
+        "time": 90.0,
+        "level": 3
+      },
+      {
+        "time": 100.0,
+        "level": 5
+      },
+      {
+        "time": 110.0,
+        "level": 5
+      },
+      {
+        "time": 120.0,
+        "level": 5
+      },
+      {
+        "time": 130.0,
+        "level": 4
+      },
+      {
+        "time": 140.0,
+        "level": 5
+      },
+      {
+        "time": 150.0,
+        "level": 9
+      },
+      {
+        "time": 160.0,
+        "level": 9
+      },
+      {
+        "time": 170.0,
+        "level": 8
+      },
+      {
+        "time": 180.0,
+        "level": 10
+      },
+      {
+        "time": 190.0,
+        "level": 7
+      },
+      {
+        "time": 200.0,
+        "level": 7
+      },
+      {
+        "time": 210.0,
+        "level": 10
+      },
+      {
+        "time": 220.0,
+        "level": 10
+      },
+      {
+        "time": 230.0,
+        "level": 6
+      },
+      {
+        "time": 240.0,
+        "level": 3
+      },
+      {
+        "time": 250.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "breakdown",
+        "time": 0.0,
+        "end_time": 15.1
+      },
+      {
+        "type": "build_up",
+        "time": 37.9,
+        "end_time": 43.7
+      },
+      {
+        "type": "drop",
+        "time": 48.4
+      },
+      {
+        "type": "drop",
+        "time": 75.5
+      },
+      {
+        "type": "build_down",
+        "time": 80.9,
+        "end_time": 85.6
+      },
+      {
+        "type": "build_up",
+        "time": 142.1,
+        "end_time": 147.2
+      },
+      {
+        "type": "drop",
+        "time": 151.4
+      },
+      {
+        "type": "peak_section",
+        "time": 151.4,
+        "end_time": 175.3
+      },
+      {
+        "type": "drop",
+        "time": 178.6
+      },
+      {
+        "type": "build_down",
+        "time": 190.7,
+        "end_time": 194.9
+      },
+      {
+        "type": "drop",
+        "time": 205.9
+      },
+      {
+        "type": "peak_section",
+        "time": 205.9,
+        "end_time": 233.5
+      },
+      {
+        "type": "build_down",
+        "time": 231.2,
+        "end_time": 236.1
+      }
+    ]
+  },
+  {
+    "file": "01. Giuseppe Ottaviani, Nifra - Unified (Extended Mix).m4a",
+    "artist": "Giuseppe Ottaviani, Nifra",
+    "title": "Unified (Extended Mix)",
+    "duration_sec": 258.2,
+    "bpm": 143.6,
+    "camelot": "9A",
+    "key": "E minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 4
+      },
+      {
+        "time": 10.0,
+        "level": 7
+      },
+      {
+        "time": 20.0,
+        "level": 9
+      },
+      {
+        "time": 30.0,
+        "level": 9
+      },
+      {
+        "time": 40.0,
+        "level": 5
+      },
+      {
+        "time": 50.0,
+        "level": 8
+      },
+      {
+        "time": 60.0,
+        "level": 9
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 9
+      },
+      {
+        "time": 90.0,
+        "level": 4
+      },
+      {
+        "time": 100.0,
+        "level": 3
+      },
+      {
+        "time": 110.0,
+        "level": 4
+      },
+      {
+        "time": 120.0,
+        "level": 5
+      },
+      {
+        "time": 130.0,
+        "level": 4
+      },
+      {
+        "time": 140.0,
+        "level": 5
+      },
+      {
+        "time": 150.0,
+        "level": 6
+      },
+      {
+        "time": 160.0,
+        "level": 5
+      },
+      {
+        "time": 170.0,
+        "level": 8
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 9
+      },
+      {
+        "time": 210.0,
+        "level": 9
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 8
+      },
+      {
+        "time": 240.0,
+        "level": 4
+      },
+      {
+        "time": 250.0,
+        "level": 2
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "build_up",
+        "time": 10.9,
+        "end_time": 15.6
+      },
+      {
+        "type": "drop",
+        "time": 13.7
+      },
+      {
+        "type": "peak_section",
+        "time": 13.7,
+        "end_time": 38.2
+      },
+      {
+        "type": "build_down",
+        "time": 35.9,
+        "end_time": 40.5
+      },
+      {
+        "type": "drop",
+        "time": 53.2
+      },
+      {
+        "type": "peak_section",
+        "time": 66.4,
+        "end_time": 91.3
+      },
+      {
+        "type": "build_down",
+        "time": 89.1,
+        "end_time": 96.0
+      },
+      {
+        "type": "drop",
+        "time": 172.4
+      },
+      {
+        "type": "peak_section",
+        "time": 172.4,
+        "end_time": 197.4
+      },
+      {
+        "type": "drop",
+        "time": 198.7
+      },
+      {
+        "type": "peak_section",
+        "time": 212.0,
+        "end_time": 236.8
+      },
+      {
+        "type": "build_down",
+        "time": 234.5,
+        "end_time": 239.6
+      }
+    ]
+  },
+  {
+    "file": "01. Jan Johnston, Tenishia, Tai Woffinden - Flesh (Extended Mix).m4a",
+    "artist": "Jan Johnston, Tenishia, Tai Woffinden",
+    "title": "Flesh (Extended Mix)",
+    "duration_sec": 241.6,
+    "bpm": 76.0,
+    "camelot": "12A",
+    "key": "C# minor",
+    "avg_energy_level": 6,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 10
+      },
+      {
+        "time": 10.0,
+        "level": 9
+      },
+      {
+        "time": 20.0,
+        "level": 9
+      },
+      {
+        "time": 30.0,
+        "level": 8
+      },
+      {
+        "time": 40.0,
+        "level": 3
+      },
+      {
+        "time": 50.0,
+        "level": 8
+      },
+      {
+        "time": 60.0,
+        "level": 8
+      },
+      {
+        "time": 70.0,
+        "level": 7
+      },
+      {
+        "time": 80.0,
+        "level": 3
+      },
+      {
+        "time": 90.0,
+        "level": 3
+      },
+      {
+        "time": 100.0,
+        "level": 4
+      },
+      {
+        "time": 110.0,
+        "level": 5
+      },
+      {
+        "time": 120.0,
+        "level": 4
+      },
+      {
+        "time": 130.0,
+        "level": 3
+      },
+      {
+        "time": 140.0,
+        "level": 4
+      },
+      {
+        "time": 150.0,
+        "level": 4
+      },
+      {
+        "time": 160.0,
+        "level": 4
+      },
+      {
+        "time": 170.0,
+        "level": 4
+      },
+      {
+        "time": 180.0,
+        "level": 6
+      },
+      {
+        "time": 190.0,
+        "level": 8
+      },
+      {
+        "time": 200.0,
+        "level": 8
+      },
+      {
+        "time": 210.0,
+        "level": 9
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 6
+      },
+      {
+        "time": 240.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 12.4,
+        "end_time": 38.2
+      },
+      {
+        "type": "build_down",
+        "time": 36.1,
+        "end_time": 41.2
+      },
+      {
+        "type": "drop",
+        "time": 51.5
+      },
+      {
+        "type": "build_down",
+        "time": 74.8,
+        "end_time": 79.6
+      },
+      {
+        "type": "build_up",
+        "time": 132.2,
+        "end_time": 136.3
+      },
+      {
+        "type": "drop",
+        "time": 186.0
+      },
+      {
+        "type": "drop",
+        "time": 211.1
+      },
+      {
+        "type": "peak_section",
+        "time": 211.1,
+        "end_time": 233.9
+      },
+      {
+        "type": "build_down",
+        "time": 231.5,
+        "end_time": 239.9
+      }
+    ]
+  },
+  {
+    "file": "01. KLP, Amy Wiles, DOREY - Imagination (Extended Mix).m4a",
+    "artist": "KLP, Amy Wiles, DOREY",
+    "title": "Imagination (Extended Mix)",
+    "duration_sec": 320.0,
+    "bpm": 143.6,
+    "camelot": "6A",
+    "key": "G minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 3
+      },
+      {
+        "time": 10.0,
+        "level": 6
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 9
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 7
+      },
+      {
+        "time": 60.0,
+        "level": 5
+      },
+      {
+        "time": 70.0,
+        "level": 3
+      },
+      {
+        "time": 80.0,
+        "level": 5
+      },
+      {
+        "time": 90.0,
+        "level": 8
+      },
+      {
+        "time": 100.0,
+        "level": 9
+      },
+      {
+        "time": 110.0,
+        "level": 9
+      },
+      {
+        "time": 120.0,
+        "level": 9
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 6
+      },
+      {
+        "time": 160.0,
+        "level": 6
+      },
+      {
+        "time": 170.0,
+        "level": 6
+      },
+      {
+        "time": 180.0,
+        "level": 7
+      },
+      {
+        "time": 190.0,
+        "level": 7
+      },
+      {
+        "time": 200.0,
+        "level": 8
+      },
+      {
+        "time": 210.0,
+        "level": 9
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 10
+      },
+      {
+        "time": 250.0,
+        "level": 9
+      },
+      {
+        "time": 260.0,
+        "level": 9
+      },
+      {
+        "time": 270.0,
+        "level": 9
+      },
+      {
+        "time": 280.0,
+        "level": 7
+      },
+      {
+        "time": 290.0,
+        "level": 4
+      },
+      {
+        "time": 300.0,
+        "level": 4
+      },
+      {
+        "time": 310.0,
+        "level": 2
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 14.4
+      },
+      {
+        "type": "peak_section",
+        "time": 27.2,
+        "end_time": 54.4
+      },
+      {
+        "type": "build_down",
+        "time": 51.8,
+        "end_time": 57.4
+      },
+      {
+        "type": "build_down",
+        "time": 66.1,
+        "end_time": 71.3
+      },
+      {
+        "type": "build_up",
+        "time": 88.8,
+        "end_time": 95.2
+      },
+      {
+        "type": "drop",
+        "time": 95.0
+      },
+      {
+        "type": "peak_section",
+        "time": 95.0,
+        "end_time": 149.9
+      },
+      {
+        "type": "build_down",
+        "time": 147.2,
+        "end_time": 152.2
+      },
+      {
+        "type": "drop",
+        "time": 190.8
+      },
+      {
+        "type": "peak_section",
+        "time": 204.2,
+        "end_time": 285.5
+      },
+      {
+        "type": "build_down",
+        "time": 282.5,
+        "end_time": 288.6
+      },
+      {
+        "type": "build_down",
+        "time": 311.3,
+        "end_time": 316.0
+      }
+    ]
+  },
+  {
+    "file": "01. Kate Ryan, Blasterjaxx - D\u00e9senchant\u00e9e 3000 (Extended Mix).m4a",
+    "artist": "Kate Ryan, Blasterjaxx",
+    "title": "D\u00e9senchant\u00e9e 3000 (Extended Mix)",
+    "duration_sec": 245.8,
+    "bpm": 143.6,
+    "camelot": "3A",
+    "key": "A# minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 5
+      },
+      {
+        "time": 10.0,
+        "level": 8
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 6
+      },
+      {
+        "time": 40.0,
+        "level": 6
+      },
+      {
+        "time": 50.0,
+        "level": 7
+      },
+      {
+        "time": 60.0,
+        "level": 10
+      },
+      {
+        "time": 70.0,
+        "level": 10
+      },
+      {
+        "time": 80.0,
+        "level": 6
+      },
+      {
+        "time": 90.0,
+        "level": 6
+      },
+      {
+        "time": 100.0,
+        "level": 6
+      },
+      {
+        "time": 110.0,
+        "level": 6
+      },
+      {
+        "time": 120.0,
+        "level": 6
+      },
+      {
+        "time": 130.0,
+        "level": 5
+      },
+      {
+        "time": 140.0,
+        "level": 5
+      },
+      {
+        "time": 150.0,
+        "level": 6
+      },
+      {
+        "time": 160.0,
+        "level": 6
+      },
+      {
+        "time": 170.0,
+        "level": 6
+      },
+      {
+        "time": 180.0,
+        "level": 6
+      },
+      {
+        "time": 190.0,
+        "level": 10
+      },
+      {
+        "time": 200.0,
+        "level": 9
+      },
+      {
+        "time": 210.0,
+        "level": 9
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 6
+      },
+      {
+        "time": 240.0,
+        "level": 3
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "build_up",
+        "time": 10.9,
+        "end_time": 15.3
+      },
+      {
+        "type": "drop",
+        "time": 13.2
+      },
+      {
+        "type": "build_down",
+        "time": 24.0,
+        "end_time": 28.4
+      },
+      {
+        "type": "drop",
+        "time": 56.4
+      },
+      {
+        "type": "peak_section",
+        "time": 56.4,
+        "end_time": 82.8
+      },
+      {
+        "type": "build_down",
+        "time": 80.4,
+        "end_time": 85.0
+      },
+      {
+        "type": "drop",
+        "time": 188.8
+      },
+      {
+        "type": "peak_section",
+        "time": 188.8,
+        "end_time": 213.9
+      },
+      {
+        "type": "drop",
+        "time": 214.8
+      },
+      {
+        "type": "build_down",
+        "time": 226.1,
+        "end_time": 230.7
+      },
+      {
+        "type": "build_down",
+        "time": 239.7,
+        "end_time": 245.2
+      }
+    ]
+  },
+  {
+    "file": "01. Lilly Palmer - New Generation (The Official Nature One Anthem 2024) (Extended Mix).m4a",
+    "artist": "Lilly Palmer",
+    "title": "New Generation (The Official Nature One Anthem 2024) (Extended Mix)",
+    "duration_sec": 372.0,
+    "bpm": 143.6,
+    "camelot": "9B",
+    "key": "G major",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 10
+      },
+      {
+        "time": 10.0,
+        "level": 10
+      },
+      {
+        "time": 20.0,
+        "level": 10
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 10
+      },
+      {
+        "time": 50.0,
+        "level": 9
+      },
+      {
+        "time": 60.0,
+        "level": 10
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 6
+      },
+      {
+        "time": 90.0,
+        "level": 5
+      },
+      {
+        "time": 100.0,
+        "level": 5
+      },
+      {
+        "time": 110.0,
+        "level": 9
+      },
+      {
+        "time": 120.0,
+        "level": 9
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 10
+      },
+      {
+        "time": 160.0,
+        "level": 9
+      },
+      {
+        "time": 170.0,
+        "level": 9
+      },
+      {
+        "time": 180.0,
+        "level": 10
+      },
+      {
+        "time": 190.0,
+        "level": 10
+      },
+      {
+        "time": 200.0,
+        "level": 7
+      },
+      {
+        "time": 210.0,
+        "level": 3
+      },
+      {
+        "time": 220.0,
+        "level": 4
+      },
+      {
+        "time": 230.0,
+        "level": 6
+      },
+      {
+        "time": 240.0,
+        "level": 6
+      },
+      {
+        "time": 250.0,
+        "level": 6
+      },
+      {
+        "time": 260.0,
+        "level": 9
+      },
+      {
+        "time": 270.0,
+        "level": 9
+      },
+      {
+        "time": 280.0,
+        "level": 8
+      },
+      {
+        "time": 290.0,
+        "level": 9
+      },
+      {
+        "time": 300.0,
+        "level": 9
+      },
+      {
+        "time": 310.0,
+        "level": 9
+      },
+      {
+        "time": 320.0,
+        "level": 9
+      },
+      {
+        "time": 330.0,
+        "level": 10
+      },
+      {
+        "time": 340.0,
+        "level": 9
+      },
+      {
+        "time": 350.0,
+        "level": 9
+      },
+      {
+        "time": 360.0,
+        "level": 9
+      },
+      {
+        "time": 370.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 0.4,
+        "end_time": 78.9
+      },
+      {
+        "type": "build_down",
+        "time": 76.6,
+        "end_time": 80.6
+      },
+      {
+        "type": "drop",
+        "time": 109.2
+      },
+      {
+        "type": "peak_section",
+        "time": 109.2,
+        "end_time": 161.9
+      },
+      {
+        "type": "drop",
+        "time": 164.0
+      },
+      {
+        "type": "peak_section",
+        "time": 178.2,
+        "end_time": 202.0
+      },
+      {
+        "type": "build_down",
+        "time": 207.4,
+        "end_time": 213.2
+      },
+      {
+        "type": "build_up",
+        "time": 215.3,
+        "end_time": 220.5
+      },
+      {
+        "type": "drop",
+        "time": 260.1
+      },
+      {
+        "type": "drop",
+        "time": 287.8
+      },
+      {
+        "type": "peak_section",
+        "time": 328.2,
+        "end_time": 368.6
+      },
+      {
+        "type": "build_down",
+        "time": 366.3,
+        "end_time": 372.0
+      }
+    ]
+  },
+  {
+    "file": "01. Maddix, Caroline Roxy - Coming Home feat. Caroline Roxy (Extended Mix).m4a",
+    "artist": "Maddix, Caroline Roxy",
+    "title": "Coming Home feat. Caroline Roxy (Extended Mix)",
+    "duration_sec": 276.0,
+    "bpm": 76.0,
+    "camelot": "3A",
+    "key": "A# minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 5
+      },
+      {
+        "time": 10.0,
+        "level": 9
+      },
+      {
+        "time": 20.0,
+        "level": 9
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 3
+      },
+      {
+        "time": 60.0,
+        "level": 5
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 9
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 9
+      },
+      {
+        "time": 110.0,
+        "level": 7
+      },
+      {
+        "time": 120.0,
+        "level": 3
+      },
+      {
+        "time": 130.0,
+        "level": 6
+      },
+      {
+        "time": 140.0,
+        "level": 6
+      },
+      {
+        "time": 150.0,
+        "level": 5
+      },
+      {
+        "time": 160.0,
+        "level": 4
+      },
+      {
+        "time": 170.0,
+        "level": 6
+      },
+      {
+        "time": 180.0,
+        "level": 4
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 9
+      },
+      {
+        "time": 210.0,
+        "level": 8
+      },
+      {
+        "time": 220.0,
+        "level": 8
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 9
+      },
+      {
+        "time": 250.0,
+        "level": 9
+      },
+      {
+        "time": 260.0,
+        "level": 7
+      },
+      {
+        "time": 270.0,
+        "level": 4
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 24.8,
+        "end_time": 47.8
+      },
+      {
+        "type": "build_down",
+        "time": 45.9,
+        "end_time": 52.8
+      },
+      {
+        "type": "drop",
+        "time": 68.3
+      },
+      {
+        "type": "drop",
+        "time": 93.1
+      },
+      {
+        "type": "peak_section",
+        "time": 93.1,
+        "end_time": 115.3
+      },
+      {
+        "type": "build_down",
+        "time": 113.7,
+        "end_time": 119.8
+      },
+      {
+        "type": "drop",
+        "time": 177.0
+      },
+      {
+        "type": "drop",
+        "time": 201.2
+      },
+      {
+        "type": "drop",
+        "time": 226.4
+      },
+      {
+        "type": "peak_section",
+        "time": 226.4,
+        "end_time": 249.5
+      }
+    ]
+  },
+  {
+    "file": "01. Marie Vaunt - That Acid (Extended Mix).m4a",
+    "artist": "Marie Vaunt",
+    "title": "That Acid (Extended Mix)",
+    "duration_sec": 217.6,
+    "bpm": 76.0,
+    "camelot": "6A",
+    "key": "G minor",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 10
+      },
+      {
+        "time": 10.0,
+        "level": 10
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 3
+      },
+      {
+        "time": 60.0,
+        "level": 2
+      },
+      {
+        "time": 70.0,
+        "level": 3
+      },
+      {
+        "time": 80.0,
+        "level": 4
+      },
+      {
+        "time": 90.0,
+        "level": 10
+      },
+      {
+        "time": 100.0,
+        "level": 10
+      },
+      {
+        "time": 110.0,
+        "level": 10
+      },
+      {
+        "time": 120.0,
+        "level": 10
+      },
+      {
+        "time": 130.0,
+        "level": 8
+      },
+      {
+        "time": 140.0,
+        "level": 10
+      },
+      {
+        "time": 150.0,
+        "level": 10
+      },
+      {
+        "time": 160.0,
+        "level": 9
+      },
+      {
+        "time": 170.0,
+        "level": 10
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 10
+      },
+      {
+        "time": 210.0,
+        "level": 8
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 0.5,
+        "end_time": 22.5
+      },
+      {
+        "type": "drop",
+        "time": 25.2
+      },
+      {
+        "type": "peak_section",
+        "time": 25.2,
+        "end_time": 48.5
+      },
+      {
+        "type": "build_down",
+        "time": 46.3,
+        "end_time": 54.3
+      },
+      {
+        "type": "breakdown",
+        "time": 52.6,
+        "end_time": 77.8
+      },
+      {
+        "type": "build_up",
+        "time": 74.7,
+        "end_time": 83.9
+      },
+      {
+        "type": "drop",
+        "time": 90.0
+      },
+      {
+        "type": "peak_section",
+        "time": 90.0,
+        "end_time": 138.1
+      },
+      {
+        "type": "drop",
+        "time": 138.3
+      },
+      {
+        "type": "peak_section",
+        "time": 139.4,
+        "end_time": 163.5
+      },
+      {
+        "type": "drop",
+        "time": 166.0
+      },
+      {
+        "type": "peak_section",
+        "time": 166.0,
+        "end_time": 189.0
+      },
+      {
+        "type": "peak_section",
+        "time": 191.6,
+        "end_time": 214.6
+      },
+      {
+        "type": "build_down",
+        "time": 212.3,
+        "end_time": 217.6
+      }
+    ]
+  },
+  {
+    "file": "01. Mark Sherry - Kill The Lights (Extended Mix).m4a",
+    "artist": "Mark Sherry",
+    "title": "Kill The Lights (Extended Mix)",
+    "duration_sec": 292.0,
+    "bpm": 76.0,
+    "camelot": "6A",
+    "key": "G minor",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 5
+      },
+      {
+        "time": 10.0,
+        "level": 6
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 9
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 9
+      },
+      {
+        "time": 60.0,
+        "level": 9
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 9
+      },
+      {
+        "time": 90.0,
+        "level": 6
+      },
+      {
+        "time": 100.0,
+        "level": 8
+      },
+      {
+        "time": 110.0,
+        "level": 9
+      },
+      {
+        "time": 120.0,
+        "level": 8
+      },
+      {
+        "time": 130.0,
+        "level": 6
+      },
+      {
+        "time": 140.0,
+        "level": 5
+      },
+      {
+        "time": 150.0,
+        "level": 5
+      },
+      {
+        "time": 160.0,
+        "level": 7
+      },
+      {
+        "time": 170.0,
+        "level": 8
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 10
+      },
+      {
+        "time": 200.0,
+        "level": 10
+      },
+      {
+        "time": 210.0,
+        "level": 10
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 9
+      },
+      {
+        "time": 250.0,
+        "level": 9
+      },
+      {
+        "time": 260.0,
+        "level": 9
+      },
+      {
+        "time": 270.0,
+        "level": 9
+      },
+      {
+        "time": 280.0,
+        "level": 5
+      },
+      {
+        "time": 290.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 25.3
+      },
+      {
+        "type": "peak_section",
+        "time": 25.3,
+        "end_time": 48.5
+      },
+      {
+        "type": "drop",
+        "time": 50.4
+      },
+      {
+        "type": "peak_section",
+        "time": 50.4,
+        "end_time": 74.5
+      },
+      {
+        "type": "drop",
+        "time": 76.1
+      },
+      {
+        "type": "build_down",
+        "time": 86.8,
+        "end_time": 91.8
+      },
+      {
+        "type": "build_up",
+        "time": 92.5,
+        "end_time": 98.6
+      },
+      {
+        "type": "drop",
+        "time": 99.3
+      },
+      {
+        "type": "peak_section",
+        "time": 102.1,
+        "end_time": 127.4
+      },
+      {
+        "type": "build_down",
+        "time": 124.4,
+        "end_time": 131.3
+      },
+      {
+        "type": "drop",
+        "time": 127.6
+      },
+      {
+        "type": "drop",
+        "time": 157.6
+      },
+      {
+        "type": "peak_section",
+        "time": 164.0,
+        "end_time": 180.4
+      },
+      {
+        "type": "drop",
+        "time": 182.1
+      },
+      {
+        "type": "peak_section",
+        "time": 182.1,
+        "end_time": 284.1
+      },
+      {
+        "type": "build_down",
+        "time": 225.3,
+        "end_time": 229.3
+      },
+      {
+        "type": "build_down",
+        "time": 281.2,
+        "end_time": 288.3
+      }
+    ]
+  },
+  {
+    "file": "01. Tiesto, Olivia Sebastianelli - Don't Lose Your Head (Extended Version).m4a",
+    "artist": "Tiesto, Olivia Sebastianelli",
+    "title": "Don't Lose Your Head (Extended Version)",
+    "duration_sec": 220.3,
+    "bpm": 136.0,
+    "camelot": "2B",
+    "key": "F# major",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 9
+      },
+      {
+        "time": 10.0,
+        "level": 9
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 3
+      },
+      {
+        "time": 40.0,
+        "level": 5
+      },
+      {
+        "time": 50.0,
+        "level": 6
+      },
+      {
+        "time": 60.0,
+        "level": 6
+      },
+      {
+        "time": 70.0,
+        "level": 9
+      },
+      {
+        "time": 80.0,
+        "level": 9
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 5
+      },
+      {
+        "time": 110.0,
+        "level": 6
+      },
+      {
+        "time": 120.0,
+        "level": 7
+      },
+      {
+        "time": 130.0,
+        "level": 6
+      },
+      {
+        "time": 140.0,
+        "level": 8
+      },
+      {
+        "time": 150.0,
+        "level": 9
+      },
+      {
+        "time": 160.0,
+        "level": 10
+      },
+      {
+        "time": 170.0,
+        "level": 9
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 9
+      },
+      {
+        "time": 210.0,
+        "level": 5
+      },
+      {
+        "time": 220.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 0.5,
+        "end_time": 26.6
+      },
+      {
+        "type": "build_down",
+        "time": 24.3,
+        "end_time": 29.9
+      },
+      {
+        "type": "drop",
+        "time": 71.6
+      },
+      {
+        "type": "peak_section",
+        "time": 71.6,
+        "end_time": 100.1
+      },
+      {
+        "type": "build_down",
+        "time": 97.6,
+        "end_time": 102.7
+      },
+      {
+        "type": "build_up",
+        "time": 109.4,
+        "end_time": 116.2
+      },
+      {
+        "type": "drop",
+        "time": 117.4
+      },
+      {
+        "type": "drop",
+        "time": 143.2
+      },
+      {
+        "type": "peak_section",
+        "time": 143.2,
+        "end_time": 170.6
+      },
+      {
+        "type": "drop",
+        "time": 171.6
+      },
+      {
+        "type": "peak_section",
+        "time": 185.3,
+        "end_time": 214.5
+      },
+      {
+        "type": "build_down",
+        "time": 212.3,
+        "end_time": 217.8
+      }
+    ]
+  },
+  {
+    "file": "01. Ueberrest - Disturbing Paradise (Original Mix).m4a",
+    "artist": "Ueberrest",
+    "title": "Disturbing Paradise (Original Mix)",
+    "duration_sec": 230.4,
+    "bpm": 76.0,
+    "camelot": "8A",
+    "key": "A minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 3
+      },
+      {
+        "time": 10.0,
+        "level": 5
+      },
+      {
+        "time": 20.0,
+        "level": 7
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 10
+      },
+      {
+        "time": 50.0,
+        "level": 9
+      },
+      {
+        "time": 60.0,
+        "level": 6
+      },
+      {
+        "time": 70.0,
+        "level": 4
+      },
+      {
+        "time": 80.0,
+        "level": 4
+      },
+      {
+        "time": 90.0,
+        "level": 4
+      },
+      {
+        "time": 100.0,
+        "level": 5
+      },
+      {
+        "time": 110.0,
+        "level": 5
+      },
+      {
+        "time": 120.0,
+        "level": 6
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 9
+      },
+      {
+        "time": 160.0,
+        "level": 9
+      },
+      {
+        "time": 170.0,
+        "level": 8
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 9
+      },
+      {
+        "time": 210.0,
+        "level": 6
+      },
+      {
+        "time": 220.0,
+        "level": 3
+      },
+      {
+        "time": 230.0,
+        "level": 1
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 25.4
+      },
+      {
+        "type": "peak_section",
+        "time": 25.4,
+        "end_time": 60.3
+      },
+      {
+        "type": "build_down",
+        "time": 57.2,
+        "end_time": 61.3
+      },
+      {
+        "type": "build_down",
+        "time": 62.2,
+        "end_time": 66.2
+      },
+      {
+        "type": "drop",
+        "time": 62.6
+      },
+      {
+        "type": "build_up",
+        "time": 98.9,
+        "end_time": 103.1
+      },
+      {
+        "type": "drop",
+        "time": 126.8
+      },
+      {
+        "type": "peak_section",
+        "time": 126.8,
+        "end_time": 149.4
+      },
+      {
+        "type": "drop",
+        "time": 149.4
+      },
+      {
+        "type": "peak_section",
+        "time": 151.0,
+        "end_time": 173.8
+      },
+      {
+        "type": "build_down",
+        "time": 170.6,
+        "end_time": 174.7
+      },
+      {
+        "type": "peak_section",
+        "time": 177.1,
+        "end_time": 214.8
+      },
+      {
+        "type": "build_down",
+        "time": 212.5,
+        "end_time": 217.6
+      },
+      {
+        "type": "build_down",
+        "time": 225.8,
+        "end_time": 230.1
+      }
+    ]
+  },
+  {
+    "file": "01. Yomanda, MDDLTN - Sunshine (MDDLTN Extended Re-Edit).m4a",
+    "artist": "Yomanda, MDDLTN",
+    "title": "Sunshine (MDDLTN Extended Re-Edit)",
+    "duration_sec": 256.6,
+    "bpm": 143.6,
+    "camelot": "7B",
+    "key": "F major",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 4
+      },
+      {
+        "time": 10.0,
+        "level": 8
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 10
+      },
+      {
+        "time": 50.0,
+        "level": 4
+      },
+      {
+        "time": 60.0,
+        "level": 3
+      },
+      {
+        "time": 70.0,
+        "level": 3
+      },
+      {
+        "time": 80.0,
+        "level": 4
+      },
+      {
+        "time": 90.0,
+        "level": 4
+      },
+      {
+        "time": 100.0,
+        "level": 7
+      },
+      {
+        "time": 110.0,
+        "level": 10
+      },
+      {
+        "time": 120.0,
+        "level": 10
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 7
+      },
+      {
+        "time": 150.0,
+        "level": 4
+      },
+      {
+        "time": 160.0,
+        "level": 5
+      },
+      {
+        "time": 170.0,
+        "level": 9
+      },
+      {
+        "time": 180.0,
+        "level": 10
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 7
+      },
+      {
+        "time": 210.0,
+        "level": 9
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 9
+      },
+      {
+        "time": 250.0,
+        "level": 4
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 13.3
+      },
+      {
+        "type": "peak_section",
+        "time": 26.8,
+        "end_time": 50.5
+      },
+      {
+        "type": "build_down",
+        "time": 48.5,
+        "end_time": 53.3
+      },
+      {
+        "type": "drop",
+        "time": 106.0
+      },
+      {
+        "type": "peak_section",
+        "time": 106.0,
+        "end_time": 145.7
+      },
+      {
+        "type": "build_down",
+        "time": 143.7,
+        "end_time": 148.7
+      },
+      {
+        "type": "build_up",
+        "time": 162.7,
+        "end_time": 167.0
+      },
+      {
+        "type": "drop",
+        "time": 172.2
+      },
+      {
+        "type": "peak_section",
+        "time": 172.2,
+        "end_time": 198.9
+      },
+      {
+        "type": "drop",
+        "time": 205.5
+      },
+      {
+        "type": "peak_section",
+        "time": 205.5,
+        "end_time": 230.5
+      },
+      {
+        "type": "peak_section",
+        "time": 231.2,
+        "end_time": 251.1
+      },
+      {
+        "type": "build_down",
+        "time": 249.2,
+        "end_time": 254.5
+      }
+    ]
+  },
+  {
+    "file": "02. Golpe - Master At Work (2024 Rave Mix).m4a",
+    "artist": "Golpe",
+    "title": "Master At Work (2024 Rave Mix)",
+    "duration_sec": 313.6,
+    "bpm": 76.0,
+    "camelot": "11A",
+    "key": "F# minor",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 2
+      },
+      {
+        "time": 10.0,
+        "level": 8
+      },
+      {
+        "time": 20.0,
+        "level": 9
+      },
+      {
+        "time": 30.0,
+        "level": 9
+      },
+      {
+        "time": 40.0,
+        "level": 9
+      },
+      {
+        "time": 50.0,
+        "level": 9
+      },
+      {
+        "time": 60.0,
+        "level": 6
+      },
+      {
+        "time": 70.0,
+        "level": 5
+      },
+      {
+        "time": 80.0,
+        "level": 8
+      },
+      {
+        "time": 90.0,
+        "level": 8
+      },
+      {
+        "time": 100.0,
+        "level": 8
+      },
+      {
+        "time": 110.0,
+        "level": 9
+      },
+      {
+        "time": 120.0,
+        "level": 6
+      },
+      {
+        "time": 130.0,
+        "level": 9
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 5
+      },
+      {
+        "time": 160.0,
+        "level": 4
+      },
+      {
+        "time": 170.0,
+        "level": 5
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 7
+      },
+      {
+        "time": 200.0,
+        "level": 6
+      },
+      {
+        "time": 210.0,
+        "level": 8
+      },
+      {
+        "time": 220.0,
+        "level": 9
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 6
+      },
+      {
+        "time": 250.0,
+        "level": 6
+      },
+      {
+        "time": 260.0,
+        "level": 9
+      },
+      {
+        "time": 270.0,
+        "level": 9
+      },
+      {
+        "time": 280.0,
+        "level": 10
+      },
+      {
+        "time": 290.0,
+        "level": 10
+      },
+      {
+        "time": 300.0,
+        "level": 10
+      },
+      {
+        "time": 310.0,
+        "level": 9
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "breakdown",
+        "time": 0.0,
+        "end_time": 12.0
+      },
+      {
+        "type": "drop",
+        "time": 13.1
+      },
+      {
+        "type": "drop",
+        "time": 38.7
+      },
+      {
+        "type": "peak_section",
+        "time": 38.7,
+        "end_time": 63.6
+      },
+      {
+        "type": "build_down",
+        "time": 61.6,
+        "end_time": 66.4
+      },
+      {
+        "type": "drop",
+        "time": 77.2
+      },
+      {
+        "type": "drop",
+        "time": 102.8
+      },
+      {
+        "type": "peak_section",
+        "time": 102.8,
+        "end_time": 121.2
+      },
+      {
+        "type": "build_down",
+        "time": 119.6,
+        "end_time": 123.8
+      },
+      {
+        "type": "drop",
+        "time": 128.3
+      },
+      {
+        "type": "peak_section",
+        "time": 128.3,
+        "end_time": 151.6
+      },
+      {
+        "type": "build_down",
+        "time": 150.0,
+        "end_time": 154.3
+      },
+      {
+        "type": "drop",
+        "time": 179.4
+      },
+      {
+        "type": "build_down",
+        "time": 196.1,
+        "end_time": 200.8
+      },
+      {
+        "type": "drop",
+        "time": 205.2
+      },
+      {
+        "type": "peak_section",
+        "time": 218.0,
+        "end_time": 243.0
+      },
+      {
+        "type": "build_down",
+        "time": 241.2,
+        "end_time": 245.6
+      },
+      {
+        "type": "drop",
+        "time": 256.5
+      },
+      {
+        "type": "peak_section",
+        "time": 256.5,
+        "end_time": 313.1
+      }
+    ]
+  },
+  {
+    "file": "02. Junkie Kid, Lister - 90s Baby (Extended Club Mix).m4a",
+    "artist": "Junkie Kid, Lister",
+    "title": "90s Baby (Extended Club Mix)",
+    "duration_sec": 237.0,
+    "bpm": 80.7,
+    "camelot": "1A",
+    "key": "G# minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 7
+      },
+      {
+        "time": 10.0,
+        "level": 7
+      },
+      {
+        "time": 20.0,
+        "level": 8
+      },
+      {
+        "time": 30.0,
+        "level": 9
+      },
+      {
+        "time": 40.0,
+        "level": 7
+      },
+      {
+        "time": 50.0,
+        "level": 4
+      },
+      {
+        "time": 60.0,
+        "level": 6
+      },
+      {
+        "time": 70.0,
+        "level": 6
+      },
+      {
+        "time": 80.0,
+        "level": 8
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 8
+      },
+      {
+        "time": 110.0,
+        "level": 4
+      },
+      {
+        "time": 120.0,
+        "level": 5
+      },
+      {
+        "time": 130.0,
+        "level": 6
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 10
+      },
+      {
+        "time": 160.0,
+        "level": 9
+      },
+      {
+        "time": 170.0,
+        "level": 9
+      },
+      {
+        "time": 180.0,
+        "level": 9
+      },
+      {
+        "time": 190.0,
+        "level": 9
+      },
+      {
+        "time": 200.0,
+        "level": 8
+      },
+      {
+        "time": 210.0,
+        "level": 7
+      },
+      {
+        "time": 220.0,
+        "level": 7
+      },
+      {
+        "time": 230.0,
+        "level": 4
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 9.2
+      },
+      {
+        "type": "drop",
+        "time": 35.8
+      },
+      {
+        "type": "build_down",
+        "time": 42.8,
+        "end_time": 47.5
+      },
+      {
+        "type": "drop",
+        "time": 84.2
+      },
+      {
+        "type": "build_down",
+        "time": 104.3,
+        "end_time": 108.8
+      },
+      {
+        "type": "build_up",
+        "time": 124.2,
+        "end_time": 128.3
+      },
+      {
+        "type": "drop",
+        "time": 138.2
+      },
+      {
+        "type": "drop",
+        "time": 162.0
+      },
+      {
+        "type": "drop",
+        "time": 186.2
+      },
+      {
+        "type": "drop",
+        "time": 219.2
+      },
+      {
+        "type": "build_down",
+        "time": 230.4,
+        "end_time": 235.0
+      }
+    ]
+  },
+  {
+    "file": "07. Soulsearcher - Can't Get Enough! (Accapella).m4a",
+    "artist": "Soulsearcher",
+    "title": "Can't Get Enough! (Accapella)",
+    "duration_sec": 155.5,
+    "bpm": 129.2,
+    "camelot": "1B",
+    "key": "B major",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 7
+      },
+      {
+        "time": 10.0,
+        "level": 6
+      },
+      {
+        "time": 20.0,
+        "level": 7
+      },
+      {
+        "time": 30.0,
+        "level": 7
+      },
+      {
+        "time": 40.0,
+        "level": 8
+      },
+      {
+        "time": 50.0,
+        "level": 7
+      },
+      {
+        "time": 60.0,
+        "level": 6
+      },
+      {
+        "time": 70.0,
+        "level": 5
+      },
+      {
+        "time": 80.0,
+        "level": 7
+      },
+      {
+        "time": 90.0,
+        "level": 8
+      },
+      {
+        "time": 100.0,
+        "level": 8
+      },
+      {
+        "time": 110.0,
+        "level": 7
+      },
+      {
+        "time": 120.0,
+        "level": 7
+      },
+      {
+        "time": 130.0,
+        "level": 7
+      },
+      {
+        "time": 140.0,
+        "level": 5
+      },
+      {
+        "time": 150.0,
+        "level": 2
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "drop",
+        "time": 38.2
+      },
+      {
+        "type": "drop",
+        "time": 58.8
+      },
+      {
+        "type": "drop",
+        "time": 81.8
+      },
+      {
+        "type": "drop",
+        "time": 113.1
+      },
+      {
+        "type": "drop",
+        "time": 133.7
+      }
+    ]
+  },
+  {
+    "file": "11. Lilly Palmer - Cold Blood (Extended Mix).m4a",
+    "artist": "Lilly Palmer",
+    "title": "Cold Blood (Extended Mix)",
+    "duration_sec": 248.3,
+    "bpm": 143.6,
+    "camelot": "4A",
+    "key": "F minor",
+    "avg_energy_level": 8,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 9
+      },
+      {
+        "time": 10.0,
+        "level": 9
+      },
+      {
+        "time": 20.0,
+        "level": 10
+      },
+      {
+        "time": 30.0,
+        "level": 10
+      },
+      {
+        "time": 40.0,
+        "level": 10
+      },
+      {
+        "time": 50.0,
+        "level": 7
+      },
+      {
+        "time": 60.0,
+        "level": 5
+      },
+      {
+        "time": 70.0,
+        "level": 5
+      },
+      {
+        "time": 80.0,
+        "level": 6
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 9
+      },
+      {
+        "time": 110.0,
+        "level": 9
+      },
+      {
+        "time": 120.0,
+        "level": 10
+      },
+      {
+        "time": 130.0,
+        "level": 6
+      },
+      {
+        "time": 140.0,
+        "level": 6
+      },
+      {
+        "time": 150.0,
+        "level": 7
+      },
+      {
+        "time": 160.0,
+        "level": 10
+      },
+      {
+        "time": 170.0,
+        "level": 9
+      },
+      {
+        "time": 180.0,
+        "level": 8
+      },
+      {
+        "time": 190.0,
+        "level": 10
+      },
+      {
+        "time": 200.0,
+        "level": 10
+      },
+      {
+        "time": 210.0,
+        "level": 10
+      },
+      {
+        "time": 220.0,
+        "level": 10
+      },
+      {
+        "time": 230.0,
+        "level": 9
+      },
+      {
+        "time": 240.0,
+        "level": 2
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 1.1,
+        "end_time": 54.6
+      },
+      {
+        "type": "build_down",
+        "time": 52.1,
+        "end_time": 58.0
+      },
+      {
+        "type": "build_up",
+        "time": 64.1,
+        "end_time": 68.5
+      },
+      {
+        "type": "build_up",
+        "time": 84.3,
+        "end_time": 88.7
+      },
+      {
+        "type": "drop",
+        "time": 87.1
+      },
+      {
+        "type": "peak_section",
+        "time": 89.4,
+        "end_time": 117.3
+      },
+      {
+        "type": "drop",
+        "time": 119.0
+      },
+      {
+        "type": "build_down",
+        "time": 129.9,
+        "end_time": 135.0
+      },
+      {
+        "type": "drop",
+        "time": 156.1
+      },
+      {
+        "type": "peak_section",
+        "time": 156.1,
+        "end_time": 181.3
+      },
+      {
+        "type": "build_down",
+        "time": 178.8,
+        "end_time": 182.9
+      },
+      {
+        "type": "drop",
+        "time": 184.7
+      },
+      {
+        "type": "peak_section",
+        "time": 184.7,
+        "end_time": 238.6
+      },
+      {
+        "type": "build_down",
+        "time": 236.2,
+        "end_time": 243.3
+      }
+    ]
+  },
+  {
+    "file": "15. Argy, Omnya - Aria (Omiki Remix).m4a",
+    "artist": "Argy, Omnya",
+    "title": "Aria (Omiki Remix)",
+    "duration_sec": 277.7,
+    "bpm": 143.6,
+    "camelot": "5A",
+    "key": "C minor",
+    "avg_energy_level": 7,
+    "energy_levels": [
+      {
+        "time": 0.0,
+        "level": 10
+      },
+      {
+        "time": 10.0,
+        "level": 9
+      },
+      {
+        "time": 20.0,
+        "level": 5
+      },
+      {
+        "time": 30.0,
+        "level": 4
+      },
+      {
+        "time": 40.0,
+        "level": 6
+      },
+      {
+        "time": 50.0,
+        "level": 7
+      },
+      {
+        "time": 60.0,
+        "level": 7
+      },
+      {
+        "time": 70.0,
+        "level": 3
+      },
+      {
+        "time": 80.0,
+        "level": 6
+      },
+      {
+        "time": 90.0,
+        "level": 9
+      },
+      {
+        "time": 100.0,
+        "level": 9
+      },
+      {
+        "time": 110.0,
+        "level": 8
+      },
+      {
+        "time": 120.0,
+        "level": 9
+      },
+      {
+        "time": 130.0,
+        "level": 6
+      },
+      {
+        "time": 140.0,
+        "level": 9
+      },
+      {
+        "time": 150.0,
+        "level": 5
+      },
+      {
+        "time": 160.0,
+        "level": 5
+      },
+      {
+        "time": 170.0,
+        "level": 5
+      },
+      {
+        "time": 180.0,
+        "level": 6
+      },
+      {
+        "time": 190.0,
+        "level": 4
+      },
+      {
+        "time": 200.0,
+        "level": 2
+      },
+      {
+        "time": 210.0,
+        "level": 6
+      },
+      {
+        "time": 220.0,
+        "level": 10
+      },
+      {
+        "time": 230.0,
+        "level": 10
+      },
+      {
+        "time": 240.0,
+        "level": 9
+      },
+      {
+        "time": 250.0,
+        "level": 9
+      },
+      {
+        "time": 260.0,
+        "level": 9
+      },
+      {
+        "time": 270.0,
+        "level": 2
+      }
+    ],
+    "structure_markers": [
+      {
+        "type": "peak_section",
+        "time": 0.4,
+        "end_time": 21.6
+      },
+      {
+        "type": "build_down",
+        "time": 19.6,
+        "end_time": 24.4
+      },
+      {
+        "type": "drop",
+        "time": 55.4
+      },
+      {
+        "type": "build_up",
+        "time": 59.0,
+        "end_time": 63.9
+      },
+      {
+        "type": "build_down",
+        "time": 66.0,
+        "end_time": 70.3
+      },
+      {
+        "type": "build_up",
+        "time": 77.3,
+        "end_time": 82.8
+      },
+      {
+        "type": "drop",
+        "time": 86.0
+      },
+      {
+        "type": "peak_section",
+        "time": 86.0,
+        "end_time": 108.2
+      },
+      {
+        "type": "drop",
+        "time": 113.0
+      },
+      {
+        "type": "peak_section",
+        "time": 113.0,
+        "end_time": 130.5
+      },
+      {
+        "type": "drop",
+        "time": 140.8
+      },
+      {
+        "type": "build_down",
+        "time": 150.6,
+        "end_time": 154.6
+      },
+      {
+        "type": "build_down",
+        "time": 194.1,
+        "end_time": 198.3
+      },
+      {
+        "type": "breakdown",
+        "time": 196.7,
+        "end_time": 209.0
+      },
+      {
+        "type": "build_up",
+        "time": 206.8,
+        "end_time": 211.4
+      },
+      {
+        "type": "drop",
+        "time": 216.0
+      },
+      {
+        "type": "peak_section",
+        "time": 216.0,
+        "end_time": 241.5
+      },
+      {
+        "type": "drop",
+        "time": 243.6
+      },
+      {
+        "type": "peak_section",
+        "time": 243.6,
+        "end_time": 268.9
+      },
+      {
+        "type": "build_down",
+        "time": 266.9,
+        "end_time": 272.1
+      }
+    ]
+  }
+]
