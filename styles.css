@@ -479,12 +479,11 @@ p {
 }
 
 .compact-recommendation-card {
-  cursor: default;
+  cursor: pointer;
 }
 
-.compact-recommendation-card:hover {
-  transform: none;
-  border-color: rgba(255, 255, 255, 0.06);
+.recommendation-card {
+  cursor: pointer;
 }
 
 .compact-recommendation-score {

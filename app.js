@@ -472,10 +472,41 @@ function renderTrackList() {
 
   elements.trackList.querySelectorAll(".track-card").forEach((card) => {
     card.addEventListener("click", () => {
-      state.selectedIndex = Number(card.dataset.index);
-      renderDashboard();
+      selectTrackFromLibraryByIndex(Number(card.dataset.index));
     });
   });
+}
+
+function selectTrackFromLibraryByIndex(index) {
+  if (!Number.isFinite(index) || index < 0 || index >= state.filteredTracks.length) {
+    return;
+  }
+
+  state.selectedIndex = index;
+  renderDashboard();
+}
+
+async function selectTrackByFile(file) {
+  if (!file) {
+    return;
+  }
+
+  let index = state.filteredTracks.findIndex((track) => track.file === file);
+  if (index >= 0) {
+    selectTrackFromLibraryByIndex(index);
+    return;
+  }
+
+  state.search = "";
+  state.filter = "all";
+  elements.searchInput.value = "";
+  renderFilters();
+  await applyFilters();
+
+  index = state.filteredTracks.findIndex((track) => track.file === file);
+  if (index >= 0) {
+    selectTrackFromLibraryByIndex(index);
+  }
 }
 
 function renderSelectedTrack(track) {
@@ -567,7 +598,7 @@ function renderRecommendations(track) {
     .map(({ track: candidate, score }) => {
       const harmonics = harmonicNote(track, candidate);
       return `
-        <article class="recommendation-card">
+        <article class="recommendation-card" data-file="${escapeHtml(candidate.file)}">
           <div class="recommendation-card-top">
             <div>
               <h3>${escapeHtml(candidate.title)}</h3>
@@ -584,6 +615,12 @@ function renderRecommendations(track) {
       `;
     })
     .join("");
+
+  elements.recommendations.querySelectorAll(".recommendation-card").forEach((card) => {
+    card.addEventListener("click", async () => {
+      await selectTrackByFile(card.dataset.file);
+    });
+  });
 }
 
 function renderCompactRecommendations(track) {
@@ -599,7 +636,7 @@ function renderCompactRecommendations(track) {
     .map(({ track: candidate, score }) => {
       const camelotClr = camelotColor(candidate.camelot);
       return `
-        <article class="track-card compact-recommendation-card">
+        <article class="track-card compact-recommendation-card" data-file="${escapeHtml(candidate.file)}">
           <div class="track-topline">
             <div>
               <h3 class="track-name">${escapeHtml(candidate.title)}</h3>
@@ -615,6 +652,14 @@ function renderCompactRecommendations(track) {
       `;
     })
     .join("");
+
+  elements.compactRecommendationList
+    .querySelectorAll(".compact-recommendation-card")
+    .forEach((card) => {
+      card.addEventListener("click", async () => {
+        await selectTrackByFile(card.dataset.file);
+      });
+    });
 }
 
 function renderMarkers(track) {
