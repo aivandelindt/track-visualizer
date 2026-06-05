@@ -505,6 +505,15 @@ p {
   letter-spacing: 0.03em;
 }
 
+.compact-marker-time-start {
+  font-weight: 700;
+  color: #f6fbff;
+}
+
+.compact-marker-time-sep {
+  opacity: 0.78;
+}
+
 .cue-strip {
   display: flex;
   flex-wrap: wrap;

@@ -614,8 +614,9 @@ function renderCompactMarkers(track) {
     }
 
     const endTime = marker.end_time;
-    const timeLabel = `${formatSeconds(marker.time)}${endTime != null ? ` - ${formatSeconds(endTime)}` : ""}`;
-    acc.get(type).push(timeLabel);
+    const startTime = formatSeconds(marker.time);
+    const endTimeLabel = endTime != null ? formatSeconds(endTime) : null;
+    acc.get(type).push({ startTime, endTimeLabel });
     return acc;
   }, new Map());
 
@@ -627,7 +628,11 @@ function renderCompactMarkers(track) {
         <article class="compact-marker-group" style="border-color:${clr.stroke.replace("0.85", "0.25")};background:${clr.fill}">
           <div class="compact-marker-type" style="color:${clr.text}">${label}</div>
           <div class="compact-marker-times">
-            ${timeLabels.map((time) => `<span class="compact-marker-time">${time}</span>`).join("")}
+            ${timeLabels
+              .map(
+                (time) => `<span class="compact-marker-time"><strong class="compact-marker-time-start">${time.startTime}</strong>${time.endTimeLabel ? ` <span class="compact-marker-time-sep">-</span> ${time.endTimeLabel}` : ""}</span>`,
+              )
+              .join("")}
           </div>
         </article>
       `;
