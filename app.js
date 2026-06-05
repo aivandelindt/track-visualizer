@@ -63,6 +63,8 @@ function cacheElements() {
     "markerCount",
     "compactMarkerList",
     "compactMarkerCount",
+    "compactRecommendationList",
+    "compactRecommendationCount",
     "compatibilityLegend",
     "energyChart",
     "folderInput",
@@ -378,6 +380,7 @@ function renderDashboard() {
   renderRecommendations(selectedTrack);
   renderMarkers(selectedTrack);
   renderCompactMarkers(selectedTrack);
+  renderCompactRecommendations(selectedTrack);
   renderChart(selectedTrack);
 }
 
@@ -541,15 +544,19 @@ function renderSelectedTrack(track) {
     .join("");
 }
 
-function renderRecommendations(track) {
-  const recommendations = state.tracks
+function getRecommendations(track, limit = 4) {
+  return state.tracks
     .filter((candidate) => candidate.file !== track.file)
     .map((candidate) => ({
       track: candidate,
       score: compatibilityScore(track, candidate),
     }))
     .sort((left, right) => right.score - left.score)
-    .slice(0, 4);
+    .slice(0, limit);
+}
+
+function renderRecommendations(track) {
+  const recommendations = getRecommendations(track, 4);
 
   if (recommendations.length === 0) {
     elements.recommendations.innerHTML = '<div class="empty-state">No recommendations available.</div>';
@@ -572,6 +579,37 @@ function renderRecommendations(track) {
             ${candidate.camelot} · ${candidate.key} · ${candidate.bpm.toFixed(1)} BPM
             <br />
             ${harmonics}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+function renderCompactRecommendations(track) {
+  const recommendations = getRecommendations(track, 4);
+  elements.compactRecommendationCount.textContent = `${recommendations.length} mixes`;
+
+  if (recommendations.length === 0) {
+    elements.compactRecommendationList.innerHTML = '<div class="empty-state">No recommendations available.</div>';
+    return;
+  }
+
+  elements.compactRecommendationList.innerHTML = recommendations
+    .map(({ track: candidate, score }) => {
+      const camelotClr = camelotColor(candidate.camelot);
+      return `
+        <article class="track-card compact-recommendation-card">
+          <div class="track-topline">
+            <div>
+              <h3 class="track-name">${escapeHtml(candidate.title)}</h3>
+              <p class="track-artist">${escapeHtml(candidate.artist)}</p>
+            </div>
+            <span class="track-chip compact-recommendation-score">${score.toFixed(0)}%</span>
+          </div>
+          <div class="track-tags">
+            <span class="track-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${candidate.camelot} · ${escapeHtml(candidate.key)}</span>
+            <span class="track-chip">${candidate.bpm.toFixed(1)} BPM</span>
           </div>
         </article>
       `;

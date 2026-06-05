@@ -459,7 +459,8 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.compact-structure-panel {
+.compact-structure-panel,
+.compact-recommendation-panel {
   margin-top: 14px;
 }
 
@@ -468,6 +469,26 @@ p {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
   margin-top: 12px;
+}
+
+.compact-recommendation-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.compact-recommendation-card {
+  cursor: default;
+}
+
+.compact-recommendation-card:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.compact-recommendation-score {
+  color: #ffd79a;
 }
 
 .compact-marker-group {
