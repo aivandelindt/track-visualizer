@@ -61,6 +61,8 @@ function cacheElements() {
     "recommendations",
     "markerList",
     "markerCount",
+    "compactMarkerList",
+    "compactMarkerCount",
     "compatibilityLegend",
     "energyChart",
     "folderInput",
@@ -375,6 +377,7 @@ function renderDashboard() {
   renderSelectedTrack(selectedTrack);
   renderRecommendations(selectedTrack);
   renderMarkers(selectedTrack);
+  renderCompactMarkers(selectedTrack);
   renderChart(selectedTrack);
 }
 
@@ -595,6 +598,43 @@ function renderMarkers(track) {
     .join("");
 }
 
+function renderCompactMarkers(track) {
+  const markers = [...(track.structure_markers || [])].sort((left, right) => Number(left.time) - Number(right.time));
+  elements.compactMarkerCount.textContent = `${markers.length} markers`;
+
+  if (markers.length === 0) {
+    elements.compactMarkerList.innerHTML = '<div class="empty-state">No structure markers.</div>';
+    return;
+  }
+
+  const grouped = markers.reduce((acc, marker) => {
+    const type = String(marker.type || "event");
+    if (!acc.has(type)) {
+      acc.set(type, []);
+    }
+
+    const endTime = marker.end_time;
+    const timeLabel = `${formatSeconds(marker.time)}${endTime != null ? ` - ${formatSeconds(endTime)}` : ""}`;
+    acc.get(type).push(timeLabel);
+    return acc;
+  }, new Map());
+
+  elements.compactMarkerList.innerHTML = Array.from(grouped.entries())
+    .map(([type, timeLabels]) => {
+      const clr = markerColor(type);
+      const label = type.replace(/_/g, " ");
+      return `
+        <article class="compact-marker-group" style="border-color:${clr.stroke.replace("0.85", "0.25")};background:${clr.fill}">
+          <div class="compact-marker-type" style="color:${clr.text}">${label}</div>
+          <div class="compact-marker-times">
+            ${timeLabels.map((time) => `<span class="compact-marker-time">${time}</span>`).join("")}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+}
+
 function renderChart(track) {
   const labels = (track.energy_levels || []).map((point) => point.time);
   const points = (track.energy_levels || []).map((point) => ({ x: point.time, y: point.level }));
@@ -740,12 +780,14 @@ function renderEmptyState() {
   elements.trackList.innerHTML = '<div class="empty-state">No tracks to show.</div>';
   elements.recommendations.innerHTML = '<div class="empty-state">No recommendations.</div>';
   elements.markerList.innerHTML = '<div class="empty-state">No structure markers.</div>';
+  elements.compactMarkerList.innerHTML = '<div class="empty-state">No structure markers.</div>';
   elements.selectedTitle.textContent = "No track selected";
   elements.selectedArtist.textContent = "Adjust search or filter criteria";
   elements.selectedBadges.innerHTML = "";
   elements.selectedMetrics.innerHTML = "";
   elements.cueStrip.innerHTML = "";
   elements.markerCount.textContent = "0 markers";
+  elements.compactMarkerCount.textContent = "0 markers";
   elements.trackCount.textContent = `0 of ${state.tracks.length} tracks`;
 
   if (state.chart) {
@@ -760,6 +802,7 @@ function renderError(error) {
   elements.trackList.innerHTML = `<div class="empty-state">${message}</div>`;
   elements.recommendations.innerHTML = `<div class="empty-state">${message}</div>`;
   elements.markerList.innerHTML = `<div class="empty-state">${message}</div>`;
+  elements.compactMarkerList.innerHTML = `<div class="empty-state">${message}</div>`;
   elements.selectedTitle.textContent = "Load error";
   elements.selectedArtist.textContent = "Serve this folder over HTTP to load the JSON file.";
   elements.trackCount.textContent = "0 tracks";

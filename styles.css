@@ -459,6 +459,52 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.compact-structure-panel {
+  margin-top: 14px;
+}
+
+.compact-marker-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.compact-marker-group {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.compact-marker-type {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.67rem;
+  color: var(--accent);
+  font-family: var(--mono);
+}
+
+.compact-marker-times {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.compact-marker-time {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
+  color: #dfe5ea;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+}
+
 .cue-strip {
   display: flex;
   flex-wrap: wrap;
