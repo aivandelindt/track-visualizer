@@ -524,7 +524,7 @@ function renderSelectedTrack(track) {
   const buildCount = countMarkers(track, "build_up") + countMarkers(track, "build_down");
   const structureSpan = structureSpanText(track);
   const metrics = [
-    { label: "Duration", value: `${track.duration_sec.toFixed(1)}s`, meta: "Track length" },
+    { label: "Duration", value: (() => { const s = track.duration_sec; const m = Math.floor(s / 60); const rem = (s % 60).toFixed(1).padStart(4, "0"); return `${m}:${rem}`; })(), meta: "Track length" },
     { label: "Energy", value: `${track.avg_energy_level}/10`, meta: "Average intensity" },
     { label: "First drop", value: formatSeconds(dropTime), meta: "Primary transition cue" },
     { label: "Structure", value: `${track.structure_markers.length}`, meta: structureSpan },
@@ -534,13 +534,19 @@ function renderSelectedTrack(track) {
 
   elements.selectedMetrics.innerHTML = metrics
     .map(
-      (item) => `
-        <div class="stat-card">
+      (item) => {
+        const isKey = item.label === "Key";
+        const keyStyle = isKey
+          ? ` style="--camelot-bg:${camelotClr.bg};--camelot-text:${camelotClr.text}"`
+          : "";
+        return `
+        <div class="stat-card ${isKey ? "key-stat-card" : ""}"${keyStyle}>
           <div class="label">${item.label}</div>
           <div class="value">${item.value}</div>
           <div class="meta">${item.meta}</div>
         </div>
-      `,
+      `;
+      },
     )
     .join("");
 
@@ -683,6 +689,7 @@ function renderMarkers(track) {
 
 function renderCompactMarkers(track) {
   const markers = [...(track.structure_markers || [])].sort((left, right) => Number(left.time) - Number(right.time));
+  const camelotClr = camelotColor(track.camelot);
   elements.compactMarkerCount.textContent = `${markers.length} markers`;
 
   if (markers.length === 0) {
@@ -696,10 +703,10 @@ function renderCompactMarkers(track) {
       acc.set(type, []);
     }
 
-    const endTime = marker.end_time;
     const startTime = formatSeconds(marker.time);
-    const endTimeLabel = endTime != null ? formatSeconds(endTime) : null;
-    acc.get(type).push({ startTime, endTimeLabel });
+    const endTime = marker.end_time;
+    const durationLabel = endTime != null ? formatSeconds(Number(endTime) - Number(marker.time)) : null;
+    acc.get(type).push({ startTime, durationLabel });
     return acc;
   }, new Map());
 
@@ -710,10 +717,10 @@ function renderCompactMarkers(track) {
       return `
         <article class="compact-marker-group" style="border-color:${clr.stroke.replace("0.85", "0.25")};background:${clr.fill}">
           <div class="compact-marker-type" style="color:${clr.text}">${label}</div>
-          <div class="compact-marker-times">
+          <div class="compact-marker-times compact-marker-times-grid">
             ${timeLabels
               .map(
-                (time) => `<span class="compact-marker-time"><strong class="compact-marker-time-start">${time.startTime}</strong>${time.endTimeLabel ? ` <span class="compact-marker-time-sep">-</span> ${time.endTimeLabel}` : ""}</span>`,
+                (time) => `<span class="compact-marker-time" style="background:${camelotClr.bg};color:${camelotClr.text}"><strong class="compact-marker-time-start">${time.startTime}</strong>${time.durationLabel ? ` <span class="compact-marker-time-sep">-</span> ${time.durationLabel}` : ""}</span>`,
               )
               .join("")}
           </div>
@@ -787,9 +794,17 @@ function renderChart(track) {
             color: "rgba(255, 255, 255, 0.05)",
           },
           ticks: {
-            color: "#8a95a2",
+            color(context) {
+              const value = context.tick?.value ?? 0;
+              return value % 60 === 0 ? "#ffffff" : "#8a95a2";
+            },
+            stepSize: 10,
+            font(context) {
+              const value = context.tick?.value ?? 0;
+              return { weight: value % 60 === 0 ? "700" : "400" };
+            },
             callback(value) {
-              return `${Number(value).toFixed(0)}s`;
+              return formatSeconds(value);
             },
           },
           title: {
