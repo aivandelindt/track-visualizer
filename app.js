@@ -521,6 +521,7 @@ function renderSelectedTrack(track) {
 
   const dropTime = firstDropTime(track);
   const peakCount = countMarkers(track, "peak_section");
+  const dropCount = countMarkers(track, "drop");
   const buildCount = countMarkers(track, "build_up") + countMarkers(track, "build_down");
   const structureSpan = structureSpanText(track);
   const metrics = [
@@ -529,18 +530,21 @@ function renderSelectedTrack(track) {
     { label: "First drop", value: formatSeconds(dropTime), meta: "Primary transition cue" },
     { label: "Structure", value: `${track.structure_markers.length}`, meta: structureSpan },
     { label: "Peaks", value: `${peakCount}`, meta: `${buildCount} build segments` },
+    { label: "Drops", value: `${dropCount}`, meta: "Impact points" },
     { label: "Key", value: track.camelot, meta: track.key },
+    { label: "BPM", value: `${track.bpm.toFixed(1)}`, meta: "Track tempo" },
   ];
 
   elements.selectedMetrics.innerHTML = metrics
     .map(
       (item) => {
         const isKey = item.label === "Key";
+        const isBpm = item.label === "BPM";
         const keyStyle = isKey
           ? ` style="--camelot-bg:${camelotClr.bg};--camelot-text:${camelotClr.text}"`
           : "";
         return `
-        <div class="stat-card ${isKey ? "key-stat-card" : ""}"${keyStyle}>
+        <div class="stat-card ${isKey ? "key-stat-card" : isBpm ? "bpm-stat-card" : ""}"${keyStyle}>
           <div class="label">${item.label}</div>
           <div class="value">${item.value}</div>
           <div class="meta">${item.meta}</div>

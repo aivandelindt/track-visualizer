@@ -418,7 +418,7 @@ p {
 
 .deck-metrics {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 10px;
   margin-top: 18px;
 }
@@ -452,6 +452,12 @@ p {
 .stat-card.key-stat-card {
   background: var(--camelot-bg, rgba(255, 255, 255, 0.03));
   border-color: rgba(255, 255, 255, 0.16);
+}
+
+.stat-card.bpm-stat-card {
+  background: rgba(240, 109, 95, 0.14);
+  border-color: rgba(240, 109, 95, 0.3);
+  color: #ffb1a8;
 }
 
 .stat-card.key-stat-card .value,
@@ -510,7 +516,8 @@ p {
 .compact-marker-type {
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: 0.67rem;
+  /* font-size: 0.67rem; */
+  font-size: 0.8rem;
   color: var(--accent);
   font-family: var(--mono);
 }
@@ -542,7 +549,8 @@ p {
   background: rgba(0, 0, 0, 0.2);
   color: #dfe5ea;
   font-family: var(--mono);
-  font-size: 0.68rem;
+  /* font-size: 0.68rem; */
+  font-size: 0.8rem;
   letter-spacing: 0.03em;
 }
 
@@ -807,7 +815,7 @@ p {
   }
 
   .deck-metrics {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 }
 
