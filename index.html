@@ -35,60 +35,79 @@
       </header>
 
       <section class="panel source-panel">
-        <div class="source-copy-block">
-          <p class="deck-label">ANALYZE FOLDER</p>
-          <h2>Upload a deck source</h2>
-          <p class="source-copy">
-            Choose a folder of audio files, then run the existing analyzer with the trance or techno preset. The deck refreshes from the returned JSON without reloading the page.
-          </p>
-          <p class="source-command">python analyze.py --input &lt;FOLDER_WITH_TRACKS&gt; --output &lt;FOLDER_TO_WRITE_JSON&gt; --genre trance</p>
-        </div>
+        <button
+          class="collapse-toggle source-toggle"
+          id="sourceCollapseToggle"
+          type="button"
+          aria-expanded="true"
+          aria-controls="sourcePanelContent"
+        >
+          <span class="deck-label">ANALYZE FOLDER</span>
+          <span class="collapse-icon" aria-hidden="true">▾</span>
+        </button>
 
-        <div class="analysis-toolbar">
-          <label class="file-picker" for="folderInput">
-            <span>Select audio folder</span>
-            <input
-              id="folderInput"
-              type="file"
-              webkitdirectory
-              directory
-              multiple
-              accept=".mp3,.wav,.flac,.m4a,.aiff,.ogg"
-            />
-          </label>
-
-          <label class="genre-picker" for="genreSelect">
-            <span>Preset</span>
-            <select id="genreSelect">
-              <option value="trance" selected>Trance</option>
-              <option value="techno">Techno</option>
-            </select>
-          </label>
-
-          <button class="analyze-btn" id="analyzeButton" type="button" disabled>Analyze selection</button>
-        </div>
-
-        <div class="source-meta-row">
-          <div class="source-meta-card">
-            <div class="metric-label">Selection</div>
-            <div class="source-meta-value" id="folderLabel">Bundled sample JSON</div>
+        <div class="collapsible-content source-panel-content" id="sourcePanelContent">
+          <div class="source-copy-block">
+            <h2>Upload a deck source</h2>
+            <p class="source-copy">
+              Choose a folder of audio files, then run the existing analyzer with the trance or techno preset. The deck refreshes from the returned JSON without reloading the page.
+            </p>
+            <p class="source-command">python analyze.py --input &lt;FOLDER_WITH_TRACKS&gt; --output &lt;FOLDER_TO_WRITE_JSON&gt; --genre trance</p>
           </div>
-          <div class="source-meta-card source-meta-card-wide">
-            <div class="metric-label">Status</div>
-            <p class="analysis-status" id="analysisStatus">Loaded bundled analysis JSON. Run the local server to analyze a selected folder.</p>
+
+          <div class="analysis-toolbar">
+            <label class="file-picker" for="folderInput">
+              <span>Select audio folder</span>
+              <input
+                id="folderInput"
+                type="file"
+                webkitdirectory
+                directory
+                multiple
+                accept=".mp3,.wav,.flac,.m4a,.aiff,.ogg"
+              />
+            </label>
+
+            <label class="genre-picker" for="genreSelect">
+              <span>Preset</span>
+              <select id="genreSelect">
+                <option value="trance" selected>Trance</option>
+                <option value="techno">Techno</option>
+              </select>
+            </label>
+
+            <button class="analyze-btn" id="analyzeButton" type="button" disabled>Analyze selection</button>
+          </div>
+
+          <div class="source-meta-row">
+            <div class="source-meta-card">
+              <div class="metric-label">Selection</div>
+              <div class="source-meta-value" id="folderLabel">Bundled sample JSON</div>
+            </div>
+            <div class="source-meta-card source-meta-card-wide">
+              <div class="metric-label">Status</div>
+              <p class="analysis-status" id="analysisStatus">Loaded bundled analysis JSON. Run the local server to analyze a selected folder.</p>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="hero-grid">
         <section class="panel summary-panel">
-          <div class="summary-header">
+          <button
+            class="summary-header collapse-toggle"
+            id="summaryCollapseToggle"
+            type="button"
+            aria-expanded="true"
+            aria-controls="summaryGrid"
+          >
             <div>
               <p class="deck-label">LIBRARY OVERVIEW</p>
               <h2 id="summaryTitle">All tracks — TinyDB</h2>
             </div>
-          </div>
-          <div class="summary-grid" id="summaryGrid"></div>
+            <span class="collapse-icon" aria-hidden="true">▾</span>
+          </button>
+          <div class="summary-grid collapsible-content" id="summaryGrid"></div>
         </section>
 
         <section class="panel deck-panel">

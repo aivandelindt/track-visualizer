@@ -165,6 +165,53 @@ p {
   padding: 18px;
 }
 
+.collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.source-toggle {
+  border-radius: 12px;
+}
+
+.source-toggle:focus-visible,
+.summary-header:focus-visible {
+  outline: 2px solid rgba(242, 162, 58, 0.55);
+  outline-offset: 3px;
+}
+
+.collapse-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--accent);
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: transform 140ms ease;
+}
+
+.collapse-toggle[aria-expanded="false"] .collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.collapsible-content[hidden] {
+  display: none !important;
+}
+
 .source-copy-block {
   display: grid;
   gap: 10px;

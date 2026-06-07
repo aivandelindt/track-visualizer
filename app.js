@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", initialize);
 
 async function initialize() {
   cacheElements();
+  initializeCollapsibles();
   renderCompatibilityLegend();
   renderFilters();
   attachEvents();
@@ -76,11 +77,47 @@ function cacheElements() {
     "analyzeButton",
     "folderLabel",
     "analysisStatus",
+    "sourceCollapseToggle",
+    "sourcePanelContent",
+    "summaryCollapseToggle",
   ];
 
   for (const id of ids) {
     elements[id] = document.getElementById(id);
   }
+}
+
+function initializeCollapsibles() {
+  const sections = [
+    {
+      toggle: elements.sourceCollapseToggle,
+      content: elements.sourcePanelContent,
+      defaultExpanded: true,
+    },
+    {
+      toggle: elements.summaryCollapseToggle,
+      content: elements.summaryGrid,
+      defaultExpanded: true,
+    },
+  ];
+
+  sections.forEach(({ toggle, content, defaultExpanded }) => {
+    if (!toggle || !content) {
+      return;
+    }
+
+    setCollapsedState(toggle, content, defaultExpanded);
+
+    toggle.addEventListener("click", () => {
+      const isExpanded = toggle.getAttribute("aria-expanded") === "true";
+      setCollapsedState(toggle, content, !isExpanded);
+    });
+  });
+}
+
+function setCollapsedState(toggle, content, isExpanded) {
+  toggle.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+  content.hidden = !isExpanded;
 }
 
 function attachEvents() {

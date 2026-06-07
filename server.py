@@ -178,12 +178,12 @@ def load_tracks_from_disk():
 
 
 def replace_tracks_in_db(tracks, *, folder, genre, mode, label):
-    TRACKS_TABLE.truncate()
+    # TRACKS_TABLE.truncate()
 
     if tracks:
         TRACKS_TABLE.insert_multiple([_enrich_track(track) for track in tracks])
 
-    META_TABLE.truncate()
+    # META_TABLE.truncate()
     META_TABLE.insert(
         {
             "folder": folder,
