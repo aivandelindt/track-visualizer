@@ -497,14 +497,16 @@ p {
 }
 
 .stat-card.key-stat-card {
-  background: var(--camelot-bg, rgba(255, 255, 255, 0.03));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.00)),
+    var(--camelot-bg, rgba(255, 255, 255, 0.03));
   border-color: rgba(255, 255, 255, 0.16);
 }
 
 .stat-card.bpm-stat-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, rgba(242, 162, 58, 0.22), rgba(242, 162, 58, 0.09));
   border-color: rgba(240, 109, 95, 0.3);
-  color: rgb(242, 162, 58);
+  color: #ffe0b2;
 }
 
 .stat-card.key-stat-card .value,
@@ -593,7 +595,7 @@ p {
   padding: 4px 8px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(0, 0, 0, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
   color: #dfe5ea;
   font-family: var(--mono);
   /* font-size: 0.68rem; */
@@ -865,7 +867,7 @@ p {
 
 .pill-warn {
   background: rgba(255, 255, 255, 0.03);
-  color: rgb(242, 162, 58);
+  color: #ffe0b2;
 }
 
 .pill-accent {

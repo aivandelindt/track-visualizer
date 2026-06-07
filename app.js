@@ -787,7 +787,7 @@ function renderCompactRecommendations(track) {
           </div>
           <div class="track-tags">
             <span class="track-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${candidate.camelot} · ${escapeHtml(candidate.key)}</span>
-            <span class="track-chip" style="background:rgba(255, 255, 255, 0.03);color:rgb(242, 162, 58)">${candidate.bpm.toFixed(1)} BPM</span>
+            <span class="track-chip" style="background:rgba(255, 255, 255, 0.03);color:#ffe0b2">${candidate.bpm.toFixed(1)} BPM</span>
             <span class="track-chip">${(() => { const s = candidate.duration_sec; const m = Math.floor(s / 60); const rem = (s % 60).toFixed(0).padStart(2, "0"); return `${m}:${rem}`; })()}</span>
           </div>
         </article>
@@ -856,7 +856,7 @@ function renderCompactMarkers(track) {
           <div class="compact-marker-times compact-marker-times-grid">
             ${timeLabels
               .map(
-                (time) => `<span class="compact-marker-time" style="background:${camelotClr.bg};color:${camelotClr.text}"><strong class="compact-marker-time-start">${time.startTime}</strong>${time.durationLabel ? ` <span class="compact-marker-time-sep">-</span> ${time.durationLabel}` : ""}</span>`,
+                (time) => `<span class="compact-marker-time" style="background:linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));color:${camelotClr.text}"><strong class="compact-marker-time-start">${time.startTime}</strong>${time.durationLabel ? ` <span class="compact-marker-time-sep">-</span> ${time.durationLabel}` : ""}</span>`,
               )
               .join("")}
           </div>
