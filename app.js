@@ -20,6 +20,10 @@ const state = {
   filteredTracks: [],
   selectedIndex: 0,
   filter: "all",
+  sort: {
+    by: null,
+    direction: "asc",
+  },
   search: "",
   chart: null,
   pendingFiles: [],
@@ -260,22 +264,56 @@ function setAnalysisStatus(message, tone) {
 }
 
 function renderFilters() {
-  elements.filterRow.innerHTML = filters
-    .map(
-      (filter) => `
-        <button class="filter-btn ${filter.id === state.filter ? "is-active" : ""}" data-filter="${filter.id}">
-          ${filter.label}
-        </button>
-      `,
-    )
-    .join("");
-
   elements.filterRow.querySelectorAll(".filter-btn").forEach((button) => {
+    const filterId = button.dataset.filter;
+    const sortBy = button.dataset.sort;
+
+    if (filterId) {
+      button.classList.toggle("is-active", filterId === state.filter);
+    }
+
+    if (sortBy === "key") {
+      button.classList.toggle("is-active", state.sort.by === "key");
+      button.textContent = `Sort by key${state.sort.by === "key" ? ` ${state.sort.direction === "asc" ? "↑" : "↓"}` : ""}`;
+    }
+
+    if (sortBy === "bpm") {
+      button.classList.toggle("is-active", state.sort.by === "bpm");
+      button.textContent = `Sort by BPM${state.sort.by === "bpm" ? ` ${state.sort.direction === "asc" ? "↑" : "↓"}` : ""}`;
+    }
+
+    if (sortBy === "default") {
+      button.classList.toggle("is-active", state.sort.by === null);
+      button.textContent = "Default order";
+    }
+
+    if (button.dataset.boundClick === "true") {
+      return;
+    }
+
     button.addEventListener("click", async () => {
-      state.filter = button.dataset.filter;
+      const clickedFilter = button.dataset.filter;
+      const clickedSort = button.dataset.sort;
+
+      if (clickedFilter) {
+        state.filter = clickedFilter;
+      } else if (clickedSort === "default") {
+        state.sort.by = null;
+        state.sort.direction = "asc";
+      } else if (clickedSort) {
+        if (state.sort.by === clickedSort) {
+          state.sort.direction = state.sort.direction === "asc" ? "desc" : "asc";
+        } else {
+          state.sort.by = clickedSort;
+          state.sort.direction = "asc";
+        }
+      }
+
       renderFilters();
       await applyFilters();
     });
+
+    button.dataset.boundClick = "true";
   });
 }
 
@@ -307,7 +345,7 @@ async function applyFilters() {
         search: state.search,
         filter: state.filter,
       });
-      state.filteredTracks = payload.tracks || [];
+      state.filteredTracks = sortTracks(payload.tracks || []);
 
       if (state.filteredTracks.length === 0) {
         state.selectedIndex = 0;
@@ -335,6 +373,7 @@ async function applyFilters() {
     const matchesFilter = matchesPreset(track, state.filter);
     return matchesSearch && matchesFilter;
   });
+  state.filteredTracks = sortTracks(state.filteredTracks);
 
   if (state.filteredTracks.length === 0) {
     state.selectedIndex = 0;
@@ -347,6 +386,61 @@ async function applyFilters() {
   }
 
   renderDashboard();
+}
+
+function sortTracks(tracks) {
+  if (!Array.isArray(tracks) || !tracks.length || !state.sort.by) {
+    return [...tracks];
+  }
+
+  const direction = state.sort.direction === "desc" ? -1 : 1;
+  const sorted = [...tracks];
+
+  if (state.sort.by === "bpm") {
+    sorted.sort((left, right) => {
+      const delta = Number(left.bpm || 0) - Number(right.bpm || 0);
+      if (delta !== 0) {
+        return delta * direction;
+      }
+
+      return String(left.title || "").localeCompare(String(right.title || ""));
+    });
+    return sorted;
+  }
+
+  if (state.sort.by === "key") {
+    sorted.sort((left, right) => compareCamelot(left.camelot, right.camelot) * direction);
+    return sorted;
+  }
+
+  return sorted;
+}
+
+function compareCamelot(left, right) {
+  const leftParsed = parseCamelot(left);
+  const rightParsed = parseCamelot(right);
+
+  if (!leftParsed && !rightParsed) {
+    return String(left || "").localeCompare(String(right || ""));
+  }
+
+  if (!leftParsed) {
+    return 1;
+  }
+
+  if (!rightParsed) {
+    return -1;
+  }
+
+  if (leftParsed.number !== rightParsed.number) {
+    return leftParsed.number - rightParsed.number;
+  }
+
+  if (leftParsed.mode !== rightParsed.mode) {
+    return leftParsed.mode.localeCompare(rightParsed.mode);
+  }
+
+  return 0;
 }
 
 async function fetchTracksFromApi({ search = "", filter = "all" } = {}) {

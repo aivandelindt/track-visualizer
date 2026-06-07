@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0b0d10" />
-    <title>CDJ3000x Track Intelligence</title>
+    <title>Track Intelligence Quotient</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,8 +22,8 @@
     <main class="app-shell">
       <header class="topbar panel">
         <div>
-          <p class="eyebrow">PIONEER CDJ3000X // TRACK INTELLIGENCE</p>
-          <h1>Beatport Set Visualizer</h1>
+          <p class="eyebrow">TRACK INTELLIGENCE QUOTIENT</p>
+          <h1>Track IQ Visualizer</h1>
           <p class="lede">
             Explore energy, harmonic compatibility, structural cue points, and on-demand analysis for your selected audio folder.
           </p>
@@ -89,9 +89,6 @@
             </div>
           </div>
           <div class="summary-grid" id="summaryGrid"></div>
-          <div class="mini-wave" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-          </div>
         </section>
 
         <section class="panel deck-panel">
@@ -140,7 +137,16 @@
             <input id="searchInput" type="search" placeholder="Search artist, title, key, Camelot" />
           </div>
 
-          <div class="filter-row" id="filterRow"></div>
+          <div class="filter-row" id="filterRow">
+            <button class="filter-btn is-active" data-filter="all" type="button">All</button>
+            <button class="filter-btn" data-filter="high-energy" type="button">Energy 8+</button>
+            <button class="filter-btn" data-filter="trancey" type="button">128-145 BPM</button>
+            <button class="filter-btn" data-filter="slow-burn" type="button">Under 100 BPM</button>
+            <span class="filter-divider" aria-hidden="true"></span>
+            <button class="filter-btn sort-btn" data-sort="key" type="button">Sort by key</button>
+            <button class="filter-btn sort-btn" data-sort="bpm" type="button">Sort by BPM</button>
+            <button class="filter-btn sort-btn" data-sort="default" type="button">Default order</button>
+          </div>
 
           <div class="track-list" id="trackList"></div>
         </aside>
