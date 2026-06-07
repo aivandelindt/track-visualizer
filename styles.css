@@ -626,6 +626,16 @@ p {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+#cueStrip > article:nth-child(2) {
+  background: rgba(76, 215, 165, 0.07);
+  border-color: rgba(76, 215, 165, 0.25);
+}
+
+#cueStrip > article:nth-child(3) {
+  background: rgba(240, 90, 188, 0.07);
+  border-color: rgba(240, 90, 188, 0.25);
+}
+
 .cue-card strong {
   display: block;
   font-size: 1rem;

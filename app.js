@@ -592,7 +592,7 @@ function renderTrackList() {
           </div>
           <div class="track-tags">
             <span class="track-chip">Energy ${track.avg_energy_level}/10</span>
-            <span class="track-chip">${track.duration_sec.toFixed(1)}s</span>
+            <span class="track-chip">${(() => { const s = track.duration_sec; const m = Math.floor(s / 60); const rem = (s % 60).toFixed(0).padStart(2, "0"); return `${m}:${rem}`; })()}</span>
             <span class="track-chip">${markers.length} cues</span>
             <span class="track-chip">Drop ${Number.isFinite(firstDrop) ? `${firstDrop.toFixed(1)}s` : "n/a"}</span>
           </div>
@@ -787,7 +787,8 @@ function renderCompactRecommendations(track) {
           </div>
           <div class="track-tags">
             <span class="track-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${candidate.camelot} · ${escapeHtml(candidate.key)}</span>
-            <span class="track-chip">${candidate.bpm.toFixed(1)} BPM</span>
+            <span class="track-chip" style="background:rgba(240, 109, 95, 0.14);color:#ffb1a8">${candidate.bpm.toFixed(1)} BPM</span>
+            <span class="track-chip">${(() => { const s = candidate.duration_sec; const m = Math.floor(s / 60); const rem = (s % 60).toFixed(0).padStart(2, "0"); return `${m}:${rem}`; })()}</span>
           </div>
         </article>
       `;
@@ -869,6 +870,7 @@ function renderChart(track) {
   const labels = (track.energy_levels || []).map((point) => point.time);
   const points = (track.energy_levels || []).map((point) => ({ x: point.time, y: point.level }));
   const markers = track.structure_markers || [];
+  const cuePoints = getCuePoints(track);
 
   if (state.chart) {
     state.chart.destroy();
@@ -973,6 +975,12 @@ function renderChart(track) {
           drawStructureOverlay(chart, markers);
         },
       },
+      {
+        id: "cuePointsOverlay",
+        beforeDraw(chart) {
+          drawCuePointsOverlay(chart, cuePoints);
+        },
+      },
     ],
   });
 }
@@ -1007,6 +1015,106 @@ function drawStructureOverlay(chart, markers) {
     ctx.fillStyle = color.stroke;
     ctx.beginPath();
     ctx.arc(x, chartArea.top + 10, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+function getCuePoints(track) {
+  const cuePoints = [];
+
+  // Mix-in cue (first drop) - use drop marker color
+  const dropTime = firstDropTime(track);
+  if (Number.isFinite(dropTime)) {
+    const dropColor = MARKER_COLORS.drop;
+    cuePoints.push({
+      time: dropTime,
+      label: "Mix-in",
+      color: dropColor.text,
+      accentColor: dropColor.fill,
+    });
+  }
+
+  // Peak window (first peak section) - use peak_section marker color
+  const peaks = (track.structure_markers || []).filter((marker) => marker.type === "peak_section");
+  if (peaks.length > 0) {
+    const peakStart = Number(peaks[0].time);
+    if (Number.isFinite(peakStart)) {
+      const peakColor = MARKER_COLORS.peak_section;
+      cuePoints.push({
+        time: peakStart,
+        label: "Peak",
+        color: peakColor.text,
+        accentColor: peakColor.fill,
+      });
+    }
+  }
+
+  // Outro cue (first build-down) - use build_down marker color
+  const buildDown = (track.structure_markers || []).find((marker) => marker.type === "build_down");
+  if (buildDown) {
+    const outroTime = Number(buildDown.time);
+    if (Number.isFinite(outroTime)) {
+      const buildDownColor = MARKER_COLORS.build_down;
+      cuePoints.push({
+        time: outroTime,
+        label: "Outro",
+        color: buildDownColor.text,
+        accentColor: buildDownColor.fill,
+      });
+    }
+  }
+
+  return cuePoints;
+}
+
+function drawCuePointsOverlay(chart, cuePoints) {
+  const { ctx, chartArea, scales } = chart;
+  if (!chartArea || !cuePoints?.length) {
+    return;
+  }
+
+  ctx.save();
+
+  for (const cuePoint of cuePoints) {
+    const x = scales.x.getPixelForValue(cuePoint.time);
+
+    // Draw solid vertical line
+    ctx.strokeStyle = cuePoint.color;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x, chartArea.top);
+    ctx.lineTo(x, chartArea.bottom);
+    ctx.stroke();
+
+    // Draw label background box
+    const labelText = cuePoint.label;
+    ctx.font = "600 11px 'IBM Plex Mono'";
+    const textMetrics = ctx.measureText(labelText);
+    const boxWidth = textMetrics.width + 10;
+    const boxHeight = 18;
+    const boxX = Math.max(chartArea.left + 2, Math.min(x - boxWidth / 2, chartArea.right - boxWidth - 2));
+    const boxY = chartArea.top - 25;
+
+    // Draw rectangle with border
+    ctx.fillStyle = cuePoint.accentColor;
+    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+    ctx.strokeStyle = cuePoint.color;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+    // Draw label text
+    ctx.fillStyle = cuePoint.color;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(labelText, boxX + boxWidth / 2, boxY + boxHeight / 2);
+
+    // Draw dot on line
+    ctx.fillStyle = cuePoint.color;
+    ctx.beginPath();
+    ctx.arc(x, chartArea.top + 8, 3.5, 0, Math.PI * 2);
     ctx.fill();
   }
 
