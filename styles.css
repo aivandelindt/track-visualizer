@@ -502,9 +502,9 @@ p {
 }
 
 .stat-card.bpm-stat-card {
-  background: rgba(240, 109, 95, 0.14);
+  background: rgba(255, 255, 255, 0.03);
   border-color: rgba(240, 109, 95, 0.3);
-  color: #ffb1a8;
+  color: rgb(242, 162, 58);
 }
 
 .stat-card.key-stat-card .value,
@@ -864,8 +864,8 @@ p {
 }
 
 .pill-warn {
-  background: rgba(240, 109, 95, 0.14);
-  color: #ffb1a8;
+  background: rgba(255, 255, 255, 0.03);
+  color: rgb(242, 162, 58);
 }
 
 .pill-accent {

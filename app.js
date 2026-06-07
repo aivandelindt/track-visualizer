@@ -787,7 +787,7 @@ function renderCompactRecommendations(track) {
           </div>
           <div class="track-tags">
             <span class="track-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${candidate.camelot} · ${escapeHtml(candidate.key)}</span>
-            <span class="track-chip" style="background:rgba(240, 109, 95, 0.14);color:#ffb1a8">${candidate.bpm.toFixed(1)} BPM</span>
+            <span class="track-chip" style="background:rgba(255, 255, 255, 0.03);color:rgb(242, 162, 58)">${candidate.bpm.toFixed(1)} BPM</span>
             <span class="track-chip">${(() => { const s = candidate.duration_sec; const m = Math.floor(s / 60); const rem = (s % 60).toFixed(0).padStart(2, "0"); return `${m}:${rem}`; })()}</span>
           </div>
         </article>
