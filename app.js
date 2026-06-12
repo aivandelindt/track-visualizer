@@ -780,11 +780,23 @@ function formatSignedNumber(value, decimals = 2, unit = "") {
 }
 
 function formatMetric(value, decimals = 2, unit = "") {
+  if (value === null || value === undefined || value === "") {
+    return "n/a";
+  }
   const number = Number(value);
   if (!Number.isFinite(number)) {
     return "n/a";
   }
   return `${number.toFixed(decimals)}${unit}`;
+}
+
+function numericValueOrNull(value) {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
 }
 
 function trackByFile(file) {
@@ -828,10 +840,12 @@ function renderCompareResult(payload) {
     .map((item) => `<div class="mastering-note">${escapeHtml(item)}</div>`)
     .join("");
 
-  const leftTrack = trackByFile(payload?.left?.file);
-  const rightTrack = trackByFile(payload?.right?.file);
-  const leftFeatures = comparisonFeatures(leftTrack);
-  const rightFeatures = comparisonFeatures(rightTrack);
+  const leftTrack = payload?.left || trackByFile(payload?.left?.file) || {};
+  const rightTrack = payload?.right || trackByFile(payload?.right?.file) || {};
+  const leftFeatures = payload?.left_features || comparisonFeatures(trackByFile(payload?.left?.file));
+  const rightFeatures = payload?.right_features || comparisonFeatures(trackByFile(payload?.right?.file));
+  const leftLoudness = numericValueOrNull(leftFeatures?.lufs) ?? numericValueOrNull(leftFeatures?.rms_db);
+  const rightLoudness = numericValueOrNull(rightFeatures?.lufs) ?? numericValueOrNull(rightFeatures?.rms_db);
 
   renderSpectrumBars(leftFeatures, rightFeatures);
   renderMfccGauge(payload);
@@ -839,15 +853,18 @@ function renderCompareResult(payload) {
   const rows = [
     {
       metric: "BPM",
-      left: formatMetric(leftTrack?.bpm, 1),
-      right: formatMetric(rightTrack?.bpm, 1),
-      delta: formatSignedNumber((rightTrack?.bpm || 0) - (leftTrack?.bpm || 0), 1),
+      left: formatMetric(leftTrack.bpm, 1),
+      right: formatMetric(rightTrack.bpm, 1),
+      delta: formatSignedNumber((Number(rightTrack.bpm) || 0) - (Number(leftTrack.bpm) || 0), 1),
     },
     {
       metric: "LUFS",
-      left: formatMetric(leftFeatures?.lufs, 2),
-      right: formatMetric(rightFeatures?.lufs, 2),
-      delta: formatSignedNumber((rightFeatures?.lufs || 0) - (leftFeatures?.lufs || 0), 2),
+      left: formatMetric(leftLoudness, 2),
+      right: formatMetric(rightLoudness, 2),
+      delta:
+        leftLoudness !== null && rightLoudness !== null
+          ? formatSignedNumber(rightLoudness - leftLoudness, 2)
+          : "n/a",
     },
     {
       metric: "Crest dB",
@@ -881,8 +898,8 @@ function renderCompareResult(payload) {
     },
     {
       metric: "Key",
-      left: escapeHtml(leftTrack?.camelot || "n/a"),
-      right: escapeHtml(rightTrack?.camelot || "n/a"),
+      left: escapeHtml(leftTrack.camelot || "n/a"),
+      right: escapeHtml(rightTrack.camelot || "n/a"),
       delta: escapeHtml(payload?.dj_workflow?.harmonic_mix ? "harmonic" : "off-lane"),
     },
     {

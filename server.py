@@ -188,6 +188,66 @@ def _sanitize_track(track):
     return clean
 
 
+def _analysis_version_number(track):
+    return _safe_float(track.get("analysis_version"), default=0.0)
+
+
+def _comparison_feature_completeness(track):
+    features = _comparison_features(track)
+    metric_keys = [
+        "lufs",
+        "lra_lu",
+        "crest_factor_db",
+        "spectral_centroid_hz",
+        "bass_ratio",
+        "mid_ratio",
+        "high_ratio",
+    ]
+
+    score = 0
+    for key in metric_keys:
+        value = features.get(key)
+        if value is None:
+            continue
+        number = _safe_float(value, default=float("nan"))
+        if math.isfinite(number):
+            score += 1
+
+    return score
+
+
+def _pick_best_track_variant(tracks):
+    if not tracks:
+        return None
+
+    def rank(track):
+        return (
+            _comparison_feature_completeness(track),
+            _analysis_version_number(track),
+        )
+
+    return max(tracks, key=rank)
+
+
+def _dedupe_tracks_by_file(tracks):
+    grouped = {}
+    order = []
+
+    for track in tracks:
+        file_name = str(track.get("file", "")).strip()
+        if file_name not in grouped:
+            grouped[file_name] = []
+            order.append(file_name)
+        grouped[file_name].append(track)
+
+    deduped = []
+    for file_name in order:
+        best = _pick_best_track_variant(grouped[file_name])
+        if best is not None:
+            deduped.append(best)
+    return deduped
+
+
 def load_tracks_from_disk():
     source_path = TRACKS_PATH if TRACKS_PATH.exists() else FALLBACK_TRACKS_PATH
     if not source_path.exists():
@@ -201,12 +261,12 @@ def load_tracks_from_disk():
 
 
 def replace_tracks_in_db(tracks, *, folder, genre, mode, label):
-    # TRACKS_TABLE.truncate()
+    TRACKS_TABLE.truncate()
 
     if tracks:
         TRACKS_TABLE.insert_multiple([_enrich_track(track) for track in tracks])
 
-    # META_TABLE.truncate()
+    META_TABLE.truncate()
     META_TABLE.insert(
         {
             "folder": folder,
@@ -278,6 +338,7 @@ def query_tracks(search="", filter_id="all"):
         else TRACKS_TABLE.all()
     )
     tracks = [_sanitize_track(record) for record in records]
+    tracks = _dedupe_tracks_by_file(tracks)
     tracks.sort(
         key=lambda track: (
             str(track.get("artist", "")).lower(),
@@ -703,10 +764,12 @@ def _find_track_by_file(file_name):
     ensure_seed_data()
     target = str(file_name).strip()
 
+    matches = []
     for record in TRACKS_TABLE.all():
         if str(record.get("file", "")) == target:
-            return _sanitize_track(record)
-    return None
+            matches.append(_sanitize_track(record))
+
+    return _pick_best_track_variant(matches)
 
 
 def _compare_tracks(left_track, right_track):
@@ -827,6 +890,8 @@ def compare_tracks_by_file(left_file, right_file):
     return {
         "left": _track_identity(left_track),
         "right": _track_identity(right_track),
+        "left_features": _comparison_features(left_track),
+        "right_features": _comparison_features(right_track),
         **result,
     }
 

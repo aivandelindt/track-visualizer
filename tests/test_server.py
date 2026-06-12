@@ -149,6 +149,43 @@ class ServerComparisonTests(unittest.TestCase):
 
         self.assertIn("tempo-safe", compared["tags"])
 
+    def test_compare_tracks_by_file_includes_feature_snapshots(self):
+        table = FakeTable([self.track_a, self.track_b])
+
+        with (
+            patch.object(server, "TRACKS_TABLE", table),
+            patch.object(server, "ensure_seed_data", lambda: None),
+        ):
+            payload = server.compare_tracks_by_file("a.wav", "b.wav")
+
+        self.assertIn("left_features", payload)
+        self.assertIn("right_features", payload)
+        self.assertIn("lufs", payload["left_features"])
+        self.assertIn("spectral_centroid_hz", payload["right_features"])
+
+    def test_find_track_prefers_feature_rich_duplicate(self):
+        sparse_variant = {
+            "file": "a.wav",
+            "artist": "A",
+            "title": "Track A",
+            "bpm": 128.0,
+            "camelot": "8A",
+            "avg_energy_level": 7,
+        }
+        rich_variant = copy.deepcopy(self.track_a)
+        rich_variant["analysis_version"] = 2
+
+        table = FakeTable([sparse_variant, rich_variant])
+
+        with (
+            patch.object(server, "TRACKS_TABLE", table),
+            patch.object(server, "ensure_seed_data", lambda: None),
+        ):
+            selected = server._find_track_by_file("a.wav")
+
+        self.assertIn("comparison_features", selected)
+        self.assertIn("lufs", selected["comparison_features"])
+
     def test_similar_tracks_sorted_and_excludes_source(self):
         table = FakeTable([self.track_a, self.track_b, self.track_c, self.track_d])
 
