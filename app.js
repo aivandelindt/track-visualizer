@@ -43,6 +43,7 @@ const state = {
     leftFile: "",
     rightFile: "",
     payload: null,
+    nextClickTarget: "left",
   },
   similar: {
     results: [],
@@ -176,9 +177,11 @@ function attachEvents() {
   elements.buildPlaylistButton.addEventListener("click", handleBuildPlaylistClick);
   elements.compareLeftSelect.addEventListener("change", (event) => {
     state.compare.leftFile = String(event.target.value || "");
+    state.compare.nextClickTarget = "right";
   });
   elements.compareRightSelect.addEventListener("change", (event) => {
     state.compare.rightFile = String(event.target.value || "");
+    state.compare.nextClickTarget = "left";
   });
 }
 
@@ -237,6 +240,7 @@ function setTracks(tracks, source = {}) {
     ...source,
     fileCount: source.fileCount ?? tracks.length,
   };
+  state.compare.nextClickTarget = "left";
   syncCompareDefaults();
   renderCompareSelectors();
   clearComparePanel();
@@ -581,10 +585,27 @@ function syncCompareDefaults(selectedTrack = null) {
     state.compare.leftFile = selected.file;
   }
 
-  if (!availableFiles.has(state.compare.rightFile) || state.compare.rightFile === state.compare.leftFile) {
+  if (!availableFiles.has(state.compare.rightFile)) {
     const fallback = tracks.find((track) => track.file !== state.compare.leftFile);
     state.compare.rightFile = fallback?.file || state.compare.leftFile;
   }
+}
+
+function assignClickedTrackToCompare(trackFile) {
+  const target = state.compare.nextClickTarget === "right" ? "right" : "left";
+
+  if (target === "left") {
+    state.compare.leftFile = String(trackFile || "");
+    state.compare.nextClickTarget = "right";
+  } else {
+    state.compare.rightFile = String(trackFile || "");
+    state.compare.nextClickTarget = "left";
+  }
+
+  setCompareStatus(
+    `Assigned ${target === "left" ? "Track A" : "Track B"} from card click.`,
+    "idle",
+  );
 }
 
 function renderCompareSelectors() {
@@ -947,7 +968,7 @@ function renderSimilarResults(payload) {
 
   elements.similarList.querySelectorAll(".recommendation-card").forEach((card) => {
     card.addEventListener("click", async () => {
-      await selectTrackByFile(card.dataset.file);
+      await selectTrackByFile(card.dataset.file, { assignToCompare: true });
     });
   });
 }
@@ -1011,7 +1032,7 @@ function renderPlaylistSeed(payload) {
 
   elements.playlistList.querySelectorAll(".playlist-seed-card").forEach((card) => {
     card.addEventListener("click", async () => {
-      await selectTrackByFile(card.dataset.file);
+      await selectTrackByFile(card.dataset.file, { assignToCompare: true });
     });
   });
 }
@@ -1127,28 +1148,34 @@ function renderTrackList() {
 
   elements.trackList.querySelectorAll(".track-card").forEach((card) => {
     card.addEventListener("click", () => {
-      selectTrackFromLibraryByIndex(Number(card.dataset.index));
+      selectTrackFromLibraryByIndex(Number(card.dataset.index), { assignToCompare: true });
     });
   });
 }
 
-function selectTrackFromLibraryByIndex(index) {
+function selectTrackFromLibraryByIndex(index, options = {}) {
+  const { assignToCompare = false } = options;
   if (!Number.isFinite(index) || index < 0 || index >= state.filteredTracks.length) {
     return;
+  }
+
+  if (assignToCompare) {
+    assignClickedTrackToCompare(state.filteredTracks[index]?.file);
   }
 
   state.selectedIndex = index;
   renderDashboard();
 }
 
-async function selectTrackByFile(file) {
+async function selectTrackByFile(file, options = {}) {
+  const { assignToCompare = false } = options;
   if (!file) {
     return;
   }
 
   let index = state.filteredTracks.findIndex((track) => track.file === file);
   if (index >= 0) {
-    selectTrackFromLibraryByIndex(index);
+    selectTrackFromLibraryByIndex(index, { assignToCompare });
     return;
   }
 
@@ -1160,7 +1187,7 @@ async function selectTrackByFile(file) {
 
   index = state.filteredTracks.findIndex((track) => track.file === file);
   if (index >= 0) {
-    selectTrackFromLibraryByIndex(index);
+    selectTrackFromLibraryByIndex(index, { assignToCompare });
   }
 }
 
@@ -1283,7 +1310,7 @@ function renderRecommendations(track) {
 
   elements.recommendations.querySelectorAll(".recommendation-card").forEach((card) => {
     card.addEventListener("click", async () => {
-      await selectTrackByFile(card.dataset.file);
+      await selectTrackByFile(card.dataset.file, { assignToCompare: true });
     });
   });
 }
@@ -1323,7 +1350,7 @@ function renderCompactRecommendations(track) {
     .querySelectorAll(".compact-recommendation-card")
     .forEach((card) => {
       card.addEventListener("click", async () => {
-        await selectTrackByFile(card.dataset.file);
+        await selectTrackByFile(card.dataset.file, { assignToCompare: true });
       });
     });
 }
