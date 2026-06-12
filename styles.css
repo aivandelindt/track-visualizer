@@ -722,7 +722,7 @@ p {
 }
 
 .track-card {
-  padding: 14px;
+  padding: 16px;
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -740,16 +740,16 @@ p {
   background: linear-gradient(180deg, rgba(242, 162, 58, 0.14), rgba(255, 255, 255, 0.02));
 }
 
+.track-name {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
 .track-topline {
   display: flex;
   justify-content: space-between;
   gap: 16px;
   align-items: flex-start;
-}
-
-.track-name {
-  font-size: 1rem;
-  line-height: 1.25;
 }
 
 .track-artist {
@@ -763,6 +763,10 @@ p {
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 12px;
+}
+
+.track-card .recommendation-meta {
+  margin-top: 10px;
 }
 
 .track-chip {

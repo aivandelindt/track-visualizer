@@ -953,12 +953,23 @@ function renderSimilarResults(payload) {
   const results = Array.isArray(payload?.results) ? payload.results : [];
   state.similar.results = results;
 
-  if (!results.length) {
+  // Deduplicate by file path, keeping highest-scored occurrence
+  const seen = new Set();
+  const uniqueResults = results.filter((item) => {
+    const key = item.track?.file || item.track?.title;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const top10 = uniqueResults.slice(0, 10);
+
+  if (!top10.length) {
     elements.similarList.innerHTML = '<div class="empty-state">No similar matches returned.</div>';
-    return;
+    return top10.length;
   }
 
-  elements.similarList.innerHTML = results
+  elements.similarList.innerHTML = top10
     .map((item) => {
       const track = item.track || {};
       const camelotClr = camelotColor(track.camelot);
@@ -991,6 +1002,7 @@ function renderSimilarResults(payload) {
       await selectTrackByFile(card.dataset.file, { assignToCompare: true });
     });
   });
+  return top10.length;
 }
 
 async function handleFindSimilarClick() {
@@ -1003,9 +1015,9 @@ async function handleFindSimilarClick() {
   setSimilarStatus("Running /api/similar query...", "idle");
   elements.findSimilarButton.disabled = true;
   try {
-    const payload = await fetchSimilarFromApi(selectedTrack.file, 6);
-    renderSimilarResults(payload);
-    setSimilarStatus(`Found ${payload.results?.length || 0} similar matches.`, "success");
+    const payload = await fetchSimilarFromApi(selectedTrack.file, 20);
+    const count = renderSimilarResults(payload);
+    setSimilarStatus(`Found ${count} similar matches.`, "success");
   } catch (error) {
     setSimilarStatus(`Similar query failed: ${error.message}`, "error");
   } finally {
@@ -1072,7 +1084,7 @@ async function handleBuildPlaylistClick() {
   setPlaylistStatus("Building playlist progression from selected seed...", "idle");
   elements.buildPlaylistButton.disabled = true;
   try {
-    const payload = await fetchPlaylistSeedFromApi(selectedTrack.file, 8);
+    const payload = await fetchPlaylistSeedFromApi(selectedTrack.file, 10);
     renderPlaylistSeed(payload);
     setPlaylistStatus(
       `Generated ${payload.playlist?.length || 0} tracks with ${payload.transitions?.length || 0} transitions.`,
@@ -1153,14 +1165,23 @@ function renderTrackList() {
       const camelotClr = camelotColor(track.camelot);
       return `
         <article class="track-card ${isActive ? "is-active" : ""}" data-index="${index}">
-          <div class="track-topline">
+          <div class="recommendation-card-top">
             <div>
               <h3 class="track-name">${escapeHtml(track.title)}</h3>
               <p class="track-artist">${escapeHtml(track.artist)}</p>
             </div>
-            <span class="track-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${track.camelot} · ${track.bpm.toFixed(1)} BPM</span>
+            <div class="recommendation-score-stack">
+              <span class="recommendation-key-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${escapeHtml(track.camelot || "n/a")}</span>
+              <div class="score">${track.bpm.toFixed(1)} BPM</div>
+            </div>
+          </div>
+          <div class="recommendation-meta">
+            <span class="recommendation-meta-item">...</span>
+            <span class="recommendation-meta-item">...</span>
+            <span class="recommendation-meta-item">...</span>
           </div>
           <div class="track-tags">
+            <span class="track-chip">${escapeHtml(track.key || "Unknown key")}</span>
             <span class="track-chip">Energy ${track.avg_energy_level}/10</span>
             <span class="track-chip">${(() => { const s = track.duration_sec; const m = Math.floor(s / 60); const rem = (s % 60).toFixed(0).padStart(2, "0"); return `${m}:${rem}`; })()}</span>
             <span class="track-chip">${markers.length} cues</span>
