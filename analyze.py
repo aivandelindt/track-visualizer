@@ -15,8 +15,12 @@ from pathlib import Path
 import audioread.ffdec
 import librosa
 import numpy as np
+import pyloudnorm as pyln
+import soundfile as sf
 from mutagen import File as MutagenFile
 from tqdm import tqdm
+
+ANALYSIS_VERSION = "2.0.0"
 
 # ----------------------------------------------------------------------
 # Genre presets
@@ -85,6 +89,175 @@ KS_MAJOR = np.array(
 KS_MINOR = np.array(
     [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17]
 )
+
+
+def empty_comparison_features():
+    return {
+        "rms_db": None,
+        "lufs": None,
+        "lra_lu": None,
+        "crest_factor_db": None,
+        "spectral_centroid_hz": None,
+        "bass_ratio": None,
+        "mid_ratio": None,
+        "high_ratio": None,
+        "stereo_width": None,
+        "clipping_ratio": None,
+        "transient_sharpness": None,
+        "mfcc_mean": None,
+        "mfcc_std": None,
+    }
+
+
+def _safe_float(value, precision=4):
+    if value is None:
+        return None
+    value = float(value)
+    if not np.isfinite(value):
+        return None
+    return round(value, precision)
+
+
+def _db(value, floor=1e-12):
+    return 20.0 * np.log10(max(float(value), floor))
+
+
+def measure_lufs_lra(path):
+    audio, rate = sf.read(path, always_2d=True)
+    if audio.size == 0:
+        return None, None
+
+    # pyloudnorm expects floating point arrays in mono or (samples, channels).
+    audio = audio.astype(np.float64, copy=False)
+    meter = pyln.Meter(rate)
+    lufs = meter.integrated_loudness(audio)
+    lra = meter.loudness_range(audio)
+    return _safe_float(lufs, 3), _safe_float(lra, 3)
+
+
+def estimate_stereo_width(path):
+    audio, _ = sf.read(path, always_2d=True)
+    if audio.size == 0 or audio.shape[1] < 2:
+        return None
+
+    left = audio[:, 0].astype(np.float64, copy=False)
+    right = audio[:, 1].astype(np.float64, copy=False)
+    mid = (left + right) * 0.5
+    side = (left - right) * 0.5
+    mid_rms = np.sqrt(np.mean(mid**2))
+    side_rms = np.sqrt(np.mean(side**2))
+    if mid_rms <= 1e-12:
+        return None
+    return _safe_float(side_rms / mid_rms, 4)
+
+
+def spectral_balance(y, sr, n_fft=2048, hop_length=512):
+    S = np.abs(librosa.stft(y=y, n_fft=n_fft, hop_length=hop_length)) ** 2
+    if S.size == 0:
+        return None, None, None
+
+    power = S.mean(axis=1)
+    freqs = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
+
+    bass = power[freqs < 100].sum()
+    mid = power[(freqs >= 100) & (freqs <= 8000)].sum()
+    high = power[freqs > 8000].sum()
+    total = bass + mid + high
+    if total <= 1e-12:
+        return None, None, None
+
+    return (
+        _safe_float(bass / total, 5),
+        _safe_float(mid / total, 5),
+        _safe_float(high / total, 5),
+    )
+
+
+def transient_sharpness(y, sr):
+    onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+    if onset_env.size == 0:
+        return None
+    p95 = np.percentile(onset_env, 95)
+    median = np.median(onset_env) + 1e-9
+    return _safe_float(p95 / median, 4)
+
+
+def clipping_ratio(y, threshold=0.999):
+    if y.size == 0:
+        return None
+    return _safe_float(np.mean(np.abs(y) >= threshold), 6)
+
+
+def mfcc_stats(y, sr, n_mfcc=13):
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
+    if mfcc.size == 0:
+        return None, None
+    mean = np.mean(mfcc, axis=1)
+    std = np.std(mfcc, axis=1)
+    return [_safe_float(v, 5) for v in mean], [_safe_float(v, 5) for v in std]
+
+
+def extract_comparison_features(path, y, sr):
+    features = empty_comparison_features()
+    errors = []
+
+    try:
+        rms = np.sqrt(np.mean(np.square(y)))
+        features["rms_db"] = _safe_float(_db(rms), 3)
+    except Exception as exc:
+        errors.append(f"rms_db: {exc}")
+
+    try:
+        features["crest_factor_db"] = _safe_float(
+            _db(np.max(np.abs(y)) / (np.sqrt(np.mean(np.square(y))) + 1e-12)), 3
+        )
+    except Exception as exc:
+        errors.append(f"crest_factor_db: {exc}")
+
+    try:
+        centroid = librosa.feature.spectral_centroid(y=y, sr=sr)
+        features["spectral_centroid_hz"] = _safe_float(float(np.mean(centroid)), 3)
+    except Exception as exc:
+        errors.append(f"spectral_centroid_hz: {exc}")
+
+    try:
+        bass_ratio, mid_ratio, high_ratio = spectral_balance(y, sr)
+        features["bass_ratio"] = bass_ratio
+        features["mid_ratio"] = mid_ratio
+        features["high_ratio"] = high_ratio
+    except Exception as exc:
+        errors.append(f"spectral_balance: {exc}")
+
+    try:
+        lufs, lra = measure_lufs_lra(path)
+        features["lufs"] = lufs
+        features["lra_lu"] = lra
+    except Exception as exc:
+        errors.append(f"loudness: {exc}")
+
+    try:
+        features["stereo_width"] = estimate_stereo_width(path)
+    except Exception as exc:
+        errors.append(f"stereo_width: {exc}")
+
+    try:
+        features["clipping_ratio"] = clipping_ratio(y)
+    except Exception as exc:
+        errors.append(f"clipping_ratio: {exc}")
+
+    try:
+        features["transient_sharpness"] = transient_sharpness(y, sr)
+    except Exception as exc:
+        errors.append(f"transient_sharpness: {exc}")
+
+    try:
+        mfcc_mean, mfcc_std = mfcc_stats(y, sr)
+        features["mfcc_mean"] = mfcc_mean
+        features["mfcc_std"] = mfcc_std
+    except Exception as exc:
+        errors.append(f"mfcc_stats: {exc}")
+
+    return features, errors
 
 
 def load_audio(path, sr=22050):
@@ -288,8 +461,10 @@ def analyze_track(path, preset):
     levels = energy_levels(times, norm)
     markers = detect_structure(times, norm, riser, preset)
     tags = read_tags(path)
+    comparison_features, comparison_errors = extract_comparison_features(path, y, sr)
 
     return {
+        "analysis_version": ANALYSIS_VERSION,
         "file": os.path.basename(path),
         "artist": tags["artist"],
         "title": tags["title"],
@@ -300,6 +475,8 @@ def analyze_track(path, preset):
         "avg_energy_level": int(round(float(norm.mean()) * 9)) + 1,
         "energy_levels": levels,
         "structure_markers": markers,
+        "comparison_features": comparison_features,
+        "comparison_errors": comparison_errors,
     }
 
 

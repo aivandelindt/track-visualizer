@@ -4,3 +4,5 @@ numpy
 mutagen
 tqdm
 tinydb
+pyloudnorm
+soundfile
