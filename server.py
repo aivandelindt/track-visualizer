@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import math
 import re
 import subprocess
 import sys
@@ -23,6 +24,7 @@ FALLBACK_TRACKS_PATH = ROOT / "output" / "tracklist_analysis example.json"
 TINYDB_PATH = ROOT / "output" / "track_cache.json"
 
 FILTER_IDS = {"all", "high-energy", "trancey", "slow-burn"}
+MAX_SIMILAR_LIMIT = 50
 
 DB = TinyDB(TINYDB_PATH)
 TRACKS_TABLE = DB.table("tracks")
@@ -264,6 +266,338 @@ def query_tracks(search="", filter_id="all"):
     return tracks
 
 
+def _safe_float(value, default=0.0):
+    try:
+        number = float(value)
+        if not math.isfinite(number):
+            return float(default)
+        return number
+    except (TypeError, ValueError):
+        return float(default)
+
+
+def _clamp01(value):
+    return max(0.0, min(1.0, float(value)))
+
+
+def _norm_range(value, low, high, default=0.0):
+    if high <= low:
+        return float(default)
+    number = _safe_float(value, default=default)
+    return _clamp01((number - low) / (high - low))
+
+
+def _camelot_parts(camelot):
+    text = str(camelot or "").strip().upper()
+    match = re.match(r"^(1[0-2]|[1-9])([AB])$", text)
+    if not match:
+        return None
+    number = int(match.group(1))
+    mode = match.group(2)
+    return number, mode
+
+
+def _camelot_distance_score(left_camelot, right_camelot):
+    left = _camelot_parts(left_camelot)
+    right = _camelot_parts(right_camelot)
+    if not left or not right:
+        return 0.3
+
+    lnum, lmode = left
+    rnum, rmode = right
+
+    if lnum == rnum and lmode == rmode:
+        return 1.0
+    if lnum == rnum and lmode != rmode:
+        return 0.82
+
+    clockwise = (lnum % 12) + 1
+    counter = ((lnum + 10) % 12) + 1
+    if rmode == lmode and rnum in {clockwise, counter}:
+        return 0.9
+
+    return 0.2
+
+
+def _comparison_features(track):
+    features = track.get("comparison_features")
+    return features if isinstance(features, dict) else {}
+
+
+def _mfcc_vector(track):
+    features = _comparison_features(track)
+    mean = features.get("mfcc_mean") or []
+    std = features.get("mfcc_std") or []
+
+    padded = []
+    for value in list(mean)[:13] + [0.0] * max(0, 13 - len(mean)):
+        padded.append(_safe_float(value, default=0.0))
+    for value in list(std)[:13] + [0.0] * max(0, 13 - len(std)):
+        padded.append(_safe_float(value, default=0.0))
+    return padded
+
+
+def _scalar_feature_vector(track):
+    features = _comparison_features(track)
+    vector = [
+        _norm_range(features.get("spectral_centroid_hz"), 0.0, 8000.0),
+        _norm_range(features.get("bass_ratio"), 0.0, 1.0),
+        _norm_range(features.get("mid_ratio"), 0.0, 1.0),
+        _norm_range(features.get("high_ratio"), 0.0, 1.0),
+        _norm_range(features.get("lufs"), -45.0, 0.0),
+        _norm_range(features.get("lra_lu"), 0.0, 25.0),
+        _norm_range(features.get("crest_factor_db"), 0.0, 25.0),
+        _norm_range(features.get("stereo_width"), 0.0, 2.0),
+        _norm_range(features.get("clipping_ratio"), 0.0, 0.05),
+        _norm_range(features.get("transient_sharpness"), 0.0, 12.0),
+    ]
+    return [0.0 if not math.isfinite(v) else float(v) for v in vector]
+
+
+def _comparison_vector(track):
+    vector = _mfcc_vector(track) + _scalar_feature_vector(track)
+    clean = []
+    for value in vector:
+        number = _safe_float(value, default=0.0)
+        clean.append(0.0 if not math.isfinite(number) else number)
+    return clean
+
+
+def _cosine_similarity(left, right):
+    if not left or not right or len(left) != len(right):
+        return 0.0
+
+    dot = sum(l * r for l, r in zip(left, right))
+    left_norm = math.sqrt(sum(l * l for l in left))
+    right_norm = math.sqrt(sum(r * r for r in right))
+    if left_norm <= 1e-12 or right_norm <= 1e-12:
+        return 0.0
+    cosine = dot / (left_norm * right_norm)
+    return _clamp01((cosine + 1.0) * 0.5)
+
+
+def _spectral_similarity_score(left_track, right_track):
+    left_features = _comparison_features(left_track)
+    right_features = _comparison_features(right_track)
+    left = [
+        _safe_float(left_features.get("bass_ratio")),
+        _safe_float(left_features.get("mid_ratio")),
+        _safe_float(left_features.get("high_ratio")),
+    ]
+    right = [
+        _safe_float(right_features.get("bass_ratio")),
+        _safe_float(right_features.get("mid_ratio")),
+        _safe_float(right_features.get("high_ratio")),
+    ]
+    distance = math.sqrt(sum((l - r) ** 2 for l, r in zip(left, right)))
+    max_distance = math.sqrt(3.0)
+    return _clamp01(1.0 - (distance / max_distance))
+
+
+def _tempo_similarity_score(left_track, right_track):
+    left_bpm = _safe_float(left_track.get("bpm"), default=0.0)
+    right_bpm = _safe_float(right_track.get("bpm"), default=0.0)
+    if left_bpm <= 0.0 or right_bpm <= 0.0:
+        return 0.0
+    bpm_delta = abs(left_bpm - right_bpm)
+    return _clamp01(1.0 - (bpm_delta / 25.0))
+
+
+def _loudness_dynamics_score(left_track, right_track):
+    left = _comparison_features(left_track)
+    right = _comparison_features(right_track)
+
+    lufs_delta = abs(_safe_float(left.get("lufs")) - _safe_float(right.get("lufs")))
+    lra_delta = abs(_safe_float(left.get("lra_lu")) - _safe_float(right.get("lra_lu")))
+    crest_delta = abs(
+        _safe_float(left.get("crest_factor_db"))
+        - _safe_float(right.get("crest_factor_db"))
+    )
+    clip_delta = abs(
+        _safe_float(left.get("clipping_ratio"))
+        - _safe_float(right.get("clipping_ratio"))
+    )
+
+    penalties = [
+        _clamp01(lufs_delta / 10.0),
+        _clamp01(lra_delta / 8.0),
+        _clamp01(crest_delta / 8.0),
+        _clamp01(clip_delta / 0.02),
+    ]
+    return _clamp01(1.0 - (sum(penalties) / len(penalties)))
+
+
+def _track_identity(track):
+    return {
+        "file": str(track.get("file", "")),
+        "artist": str(track.get("artist", "")),
+        "title": str(track.get("title", "")),
+        "bpm": _safe_float(track.get("bpm"), default=0.0),
+        "camelot": str(track.get("camelot", "")),
+    }
+
+
+def _find_track_by_file(file_name):
+    if not str(file_name or "").strip():
+        raise ValueError("Parameter 'file' is required.")
+
+    ensure_seed_data()
+    target = str(file_name).strip()
+
+    for record in TRACKS_TABLE.all():
+        if str(record.get("file", "")) == target:
+            return _sanitize_track(record)
+    return None
+
+
+def _compare_tracks(left_track, right_track):
+    left_vector = _comparison_vector(left_track)
+    right_vector = _comparison_vector(right_track)
+
+    # These weights sum to 1.0 and keep harmonic/tempo context meaningful for DJs.
+    timbre_score = _cosine_similarity(
+        _mfcc_vector(left_track), _mfcc_vector(right_track)
+    )
+    spectral_score = _spectral_similarity_score(left_track, right_track)
+    tempo_score = _tempo_similarity_score(left_track, right_track)
+    key_score = _camelot_distance_score(
+        left_track.get("camelot"), right_track.get("camelot")
+    )
+    loudness_score = _loudness_dynamics_score(left_track, right_track)
+
+    weighted = (
+        (0.35 * timbre_score)
+        + (0.20 * spectral_score)
+        + (0.20 * tempo_score)
+        + (0.15 * key_score)
+        + (0.10 * loudness_score)
+    )
+    similarity_score = round(weighted * 100.0, 2)
+
+    left_features = _comparison_features(left_track)
+    right_features = _comparison_features(right_track)
+
+    deltas = {
+        "bpm": round(
+            abs(
+                _safe_float(left_track.get("bpm")) - _safe_float(right_track.get("bpm"))
+            ),
+            3,
+        ),
+        "lufs": round(
+            abs(
+                _safe_float(left_features.get("lufs"))
+                - _safe_float(right_features.get("lufs"))
+            ),
+            3,
+        ),
+        "lra_lu": round(
+            abs(
+                _safe_float(left_features.get("lra_lu"))
+                - _safe_float(right_features.get("lra_lu"))
+            ),
+            3,
+        ),
+        "crest_factor_db": round(
+            abs(
+                _safe_float(left_features.get("crest_factor_db"))
+                - _safe_float(right_features.get("crest_factor_db"))
+            ),
+            3,
+        ),
+        "spectral_centroid_hz": round(
+            abs(
+                _safe_float(left_features.get("spectral_centroid_hz"))
+                - _safe_float(right_features.get("spectral_centroid_hz"))
+            ),
+            3,
+        ),
+    }
+
+    tags = []
+    if key_score >= 0.82:
+        tags.append("harmonic")
+    if tempo_score >= 0.85:
+        tags.append("tempo-safe")
+    if spectral_score >= 0.75:
+        tags.append("spectral-match")
+    if loudness_score < 0.5:
+        tags.append("loudness-mismatch")
+
+    components = {
+        "timbre": round(timbre_score, 4),
+        "spectral": round(spectral_score, 4),
+        "tempo": round(tempo_score, 4),
+        "key": round(key_score, 4),
+        "loudness_dynamics": round(loudness_score, 4),
+    }
+
+    return {
+        "similarity_score": similarity_score,
+        "components": components,
+        "deltas": deltas,
+        "tags": tags,
+        "vector_stats": {
+            "left_length": len(left_vector),
+            "right_length": len(right_vector),
+            "left_has_nan": any(not math.isfinite(v) for v in left_vector),
+            "right_has_nan": any(not math.isfinite(v) for v in right_vector),
+        },
+    }
+
+
+def compare_tracks_by_file(left_file, right_file):
+    left_track = _find_track_by_file(left_file)
+    if left_track is None:
+        raise ValueError(f"Unknown left track: {left_file}")
+
+    right_track = _find_track_by_file(right_file)
+    if right_track is None:
+        raise ValueError(f"Unknown right track: {right_file}")
+
+    result = _compare_tracks(left_track, right_track)
+    return {
+        "left": _track_identity(left_track),
+        "right": _track_identity(right_track),
+        **result,
+    }
+
+
+def similar_tracks_for_file(file_name, limit=10):
+    base_track = _find_track_by_file(file_name)
+    if base_track is None:
+        raise ValueError(f"Unknown track: {file_name}")
+
+    ensure_seed_data()
+    candidates = []
+    for record in TRACKS_TABLE.all():
+        candidate = _sanitize_track(record)
+        if str(candidate.get("file", "")) == str(base_track.get("file", "")):
+            continue
+
+        compared = _compare_tracks(base_track, candidate)
+        candidates.append(
+            {
+                "track": _track_identity(candidate),
+                "similarity_score": compared["similarity_score"],
+                "components": compared["components"],
+                "tags": compared["tags"],
+            }
+        )
+
+    candidates.sort(
+        key=lambda item: (
+            -_safe_float(item.get("similarity_score"), default=0.0),
+            str(item.get("track", {}).get("artist", "")).lower(),
+            str(item.get("track", {}).get("title", "")).lower(),
+        )
+    )
+    return {
+        "source": _track_identity(base_track),
+        "results": candidates[:limit],
+    }
+
+
 class AnalyzerHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
@@ -287,6 +621,30 @@ class AnalyzerHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/tracks":
             try:
                 self.handle_tracks_query(parsed.query)
+            except ValueError as error:
+                self.send_json({"error": str(error)}, status=400)
+            except Exception as error:
+                self.send_json(
+                    {"error": f"Unexpected server error: {error}"},
+                    status=500,
+                )
+            return
+
+        if parsed.path == "/api/compare":
+            try:
+                self.handle_compare_query(parsed.query)
+            except ValueError as error:
+                self.send_json({"error": str(error)}, status=400)
+            except Exception as error:
+                self.send_json(
+                    {"error": f"Unexpected server error: {error}"},
+                    status=500,
+                )
+            return
+
+        if parsed.path == "/api/similar":
+            try:
+                self.handle_similar_query(parsed.query)
             except ValueError as error:
                 self.send_json({"error": str(error)}, status=400)
             except Exception as error:
@@ -370,6 +728,56 @@ class AnalyzerHandler(SimpleHTTPRequestHandler):
                 "query": {
                     "search": search,
                     "filter": filter_id,
+                },
+            }
+        )
+
+    def handle_compare_query(self, query_string):
+        query_params = parse_qs(query_string)
+        left_file = query_params.get("left", [""])[0]
+        right_file = query_params.get("right", [""])[0]
+
+        if not left_file:
+            raise ValueError("Parameter 'left' is required.")
+        if not right_file:
+            raise ValueError("Parameter 'right' is required.")
+
+        compared = compare_tracks_by_file(left_file=left_file, right_file=right_file)
+        self.send_json(
+            {
+                **compared,
+                "query": {
+                    "left": left_file,
+                    "right": right_file,
+                },
+            }
+        )
+
+    def handle_similar_query(self, query_string):
+        query_params = parse_qs(query_string)
+        file_name = query_params.get("file", [""])[0]
+        limit_raw = query_params.get("limit", ["10"])[0]
+
+        if not file_name:
+            raise ValueError("Parameter 'file' is required.")
+
+        try:
+            limit = int(limit_raw)
+        except ValueError:
+            raise ValueError("Parameter 'limit' must be an integer.") from None
+
+        if limit < 1:
+            raise ValueError("Parameter 'limit' must be >= 1.")
+        if limit > MAX_SIMILAR_LIMIT:
+            raise ValueError(f"Parameter 'limit' must be <= {MAX_SIMILAR_LIMIT}.")
+
+        payload = similar_tracks_for_file(file_name=file_name, limit=limit)
+        self.send_json(
+            {
+                **payload,
+                "query": {
+                    "file": file_name,
+                    "limit": limit,
                 },
             }
         )

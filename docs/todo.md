@@ -69,10 +69,10 @@ Recommended libraries and methods:
 
 ### Phase 2: Similarity Engine
 
-- [ ] T2.1 Create server-side feature vector builder and normalization rules.
+- [x] T2.1 Create server-side feature vector builder and normalization rules.
   - Acceptance: all vectors have fixed length and no NaN values.
 
-- [ ] T2.2 Implement weighted similarity score (0-100):
+- [x] T2.2 Implement weighted similarity score (0-100):
   - Timbre (MFCC cosine)
   - Spectral balance distance
   - Tempo distance
@@ -80,10 +80,10 @@ Recommended libraries and methods:
   - Loudness/dynamics distance
   - Acceptance: same-track comparison > 95, unrelated tracks lower.
 
-- [ ] T2.3 Add `GET /api/compare?left=<file>&right=<file>` endpoint.
+- [x] T2.3 Add `GET /api/compare?left=<file>&right=<file>` endpoint.
   - Acceptance: response returns per-metric deltas + total score + compatibility tags.
 
-- [ ] T2.4 Add `GET /api/similar?file=<file>&limit=10` endpoint.
+- [x] T2.4 Add `GET /api/similar?file=<file>&limit=10` endpoint.
   - Acceptance: returns top N ranked tracks excluding source track.
 
 ### Phase 3: Mastering Review Features
