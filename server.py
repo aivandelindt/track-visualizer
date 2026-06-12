@@ -26,6 +26,18 @@ TINYDB_PATH = ROOT / "output" / "track_cache.json"
 FILTER_IDS = {"all", "high-energy", "trancey", "slow-burn"}
 MAX_SIMILAR_LIMIT = 50
 
+MASTERING_THRESHOLDS = {
+    "target_lufs": -14.0,
+    "lufs_pass_delta": 1.5,
+    "lufs_warn_delta": 3.0,
+    "crest_min_db": 6.0,
+    "crest_warn_db": 4.5,
+    "clipping_warn_ratio": 0.001,
+    "clipping_fail_ratio": 0.005,
+    "brightness_pass_delta_hz": 250.0,
+    "brightness_warn_delta_hz": 600.0,
+}
+
 DB = TinyDB(TINYDB_PATH)
 TRACKS_TABLE = DB.table("tracks")
 META_TABLE = DB.table("meta")
@@ -437,6 +449,131 @@ def _track_identity(track):
     }
 
 
+def _status_from_delta(value, pass_limit, warn_limit):
+    number = abs(_safe_float(value, default=0.0))
+    if number <= pass_limit:
+        return "pass"
+    if number <= warn_limit:
+        return "warn"
+    return "fail"
+
+
+def _status_from_floor(value, pass_floor, warn_floor):
+    number = _safe_float(value, default=0.0)
+    if number >= pass_floor:
+        return "pass"
+    if number >= warn_floor:
+        return "warn"
+    return "fail"
+
+
+def _status_from_ceiling(value, pass_ceiling, warn_ceiling):
+    number = _safe_float(value, default=0.0)
+    if number <= pass_ceiling:
+        return "pass"
+    if number <= warn_ceiling:
+        return "warn"
+    return "fail"
+
+
+def _mastering_assessment(left_track, right_track, deltas):
+    thresholds = dict(MASTERING_THRESHOLDS)
+    left_features = _comparison_features(left_track)
+    right_features = _comparison_features(right_track)
+
+    left_lufs = _safe_float(left_features.get("lufs"))
+    right_lufs = _safe_float(right_features.get("lufs"))
+    left_crest = _safe_float(left_features.get("crest_factor_db"))
+    right_crest = _safe_float(right_features.get("crest_factor_db"))
+    left_clip = _safe_float(left_features.get("clipping_ratio"))
+    right_clip = _safe_float(right_features.get("clipping_ratio"))
+
+    loudness_alignment = _status_from_delta(
+        deltas.get("lufs"),
+        pass_limit=thresholds["lufs_pass_delta"],
+        warn_limit=thresholds["lufs_warn_delta"],
+    )
+    brightness_alignment = _status_from_delta(
+        deltas.get("spectral_centroid_hz"),
+        pass_limit=thresholds["brightness_pass_delta_hz"],
+        warn_limit=thresholds["brightness_warn_delta_hz"],
+    )
+    left_lufs_target = _status_from_delta(
+        left_lufs - thresholds["target_lufs"],
+        pass_limit=thresholds["lufs_pass_delta"],
+        warn_limit=thresholds["lufs_warn_delta"],
+    )
+    right_lufs_target = _status_from_delta(
+        right_lufs - thresholds["target_lufs"],
+        pass_limit=thresholds["lufs_pass_delta"],
+        warn_limit=thresholds["lufs_warn_delta"],
+    )
+    dynamics_left = _status_from_floor(
+        left_crest,
+        pass_floor=thresholds["crest_min_db"],
+        warn_floor=thresholds["crest_warn_db"],
+    )
+    dynamics_right = _status_from_floor(
+        right_crest,
+        pass_floor=thresholds["crest_min_db"],
+        warn_floor=thresholds["crest_warn_db"],
+    )
+    clipping_left = _status_from_ceiling(
+        left_clip,
+        pass_ceiling=thresholds["clipping_warn_ratio"],
+        warn_ceiling=thresholds["clipping_fail_ratio"],
+    )
+    clipping_right = _status_from_ceiling(
+        right_clip,
+        pass_ceiling=thresholds["clipping_warn_ratio"],
+        warn_ceiling=thresholds["clipping_fail_ratio"],
+    )
+
+    flags = {
+        "loudness_alignment": loudness_alignment,
+        "brightness_alignment": brightness_alignment,
+        "left_lufs_target": left_lufs_target,
+        "right_lufs_target": right_lufs_target,
+        "left_dynamics": dynamics_left,
+        "right_dynamics": dynamics_right,
+        "left_clipping": clipping_left,
+        "right_clipping": clipping_right,
+    }
+
+    recommendations = []
+    if loudness_alignment != "pass":
+        recommendations.append(
+            "Align integrated loudness before final compare; target similar LUFS envelopes."
+        )
+    if brightness_alignment == "fail":
+        recommendations.append(
+            "Spectral brightness gap is large; rebalance high-end EQ before transition."
+        )
+    if dynamics_left != "pass" or dynamics_right != "pass":
+        recommendations.append(
+            "Crest factor suggests compression mismatch; revisit bus compression or limiter settings."
+        )
+    if clipping_left != "pass" or clipping_right != "pass":
+        recommendations.append(
+            "Clipping risk detected; reduce limiter ceiling or gain stage to preserve headroom."
+        )
+    if not recommendations:
+        recommendations.append(
+            "Mastering metrics are aligned; this pair is suitable as a consistent reference transition."
+        )
+
+    fail_count = sum(1 for status in flags.values() if status == "fail")
+    warn_count = sum(1 for status in flags.values() if status == "warn")
+    overall = "fail" if fail_count > 0 else "warn" if warn_count > 0 else "pass"
+
+    return {
+        "overall": overall,
+        "thresholds": thresholds,
+        "flags": flags,
+        "recommendations": recommendations,
+    }
+
+
 def _find_track_by_file(file_name):
     if not str(file_name or "").strip():
         raise ValueError("Parameter 'file' is required.")
@@ -532,11 +669,14 @@ def _compare_tracks(left_track, right_track):
         "loudness_dynamics": round(loudness_score, 4),
     }
 
+    mastering = _mastering_assessment(left_track, right_track, deltas)
+
     return {
         "similarity_score": similarity_score,
         "components": components,
         "deltas": deltas,
         "tags": tags,
+        "mastering": mastering,
         "vector_stats": {
             "left_length": len(left_vector),
             "right_length": len(right_vector),

@@ -144,6 +144,15 @@
           </div>
 
           <div class="cue-strip" id="cueStrip"></div>
+
+          <section class="structure-panel similar-panel">
+            <div class="structure-header">
+              <h3>Similar matches</h3>
+              <button class="filter-btn" id="findSimilarButton" type="button">Find similar</button>
+            </div>
+            <p class="compare-status" id="similarStatus">Run “Find similar” to query /api/similar for this deck track.</p>
+            <div class="similar-list" id="similarList"></div>
+          </section>
         </section>
       </section>
 
@@ -172,6 +181,64 @@
         </aside>
 
         <section class="panel insight-panel">
+          <section class="compare-panel">
+            <div class="insight-header">
+              <div>
+                <p class="deck-label">TRACK COMPARE</p>
+                <h2>A/B Analyzer</h2>
+              </div>
+            </div>
+
+            <div class="compare-controls">
+              <label class="compare-picker" for="compareLeftSelect">
+                <span>Track A</span>
+                <select id="compareLeftSelect"></select>
+              </label>
+
+              <label class="compare-picker" for="compareRightSelect">
+                <span>Track B</span>
+                <select id="compareRightSelect"></select>
+              </label>
+
+              <button class="analyze-btn compare-btn" id="runCompareButton" type="button">Compare tracks</button>
+            </div>
+
+            <div class="compare-score-row">
+              <article class="metric-card compare-score-card">
+                <div class="metric-label">Similarity score</div>
+                <div class="metric-value" id="compareScore">--</div>
+                <div class="chip-group" id="compareTags"></div>
+              </article>
+
+              <article class="metric-card compare-score-card">
+                <div class="metric-label">Mastering status</div>
+                <div class="metric-value" id="compareMasteringOverall">--</div>
+                <div class="chip-group" id="compareMasteringFlags"></div>
+              </article>
+            </div>
+
+            <div class="compare-table-wrap">
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Track A</th>
+                    <th>Track B</th>
+                    <th>Delta</th>
+                  </tr>
+                </thead>
+                <tbody id="compareDeltaBody">
+                  <tr>
+                    <td colspan="4" class="empty-state">Run a compare query to view metric deltas.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="compare-recommendations" id="compareMasteringRecommendations"></div>
+            <p class="compare-status" id="compareStatus">Ready to compare tracks.</p>
+          </section>
+
           <div class="insight-header">
             <div>
               <p class="deck-label">MIX RECOMMENDATIONS</p>

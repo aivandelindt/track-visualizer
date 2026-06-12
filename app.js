@@ -1,6 +1,8 @@
 const DEFAULT_DATA_URL = "output/tracklist_analysis.json";
 const ANALYZE_ENDPOINT = "/api/analyze";
 const TRACKS_ENDPOINT = "/api/tracks";
+const COMPARE_ENDPOINT = "/api/compare";
+const SIMILAR_ENDPOINT = "/api/similar";
 
 const filters = [
   { id: "all", label: "All" },
@@ -36,6 +38,14 @@ const state = {
   },
   queryTimer: null,
   backendQueryEnabled: true,
+  compare: {
+    leftFile: "",
+    rightFile: "",
+    payload: null,
+  },
+  similar: {
+    results: [],
+  },
 };
 
 const elements = {};
@@ -80,6 +90,19 @@ function cacheElements() {
     "sourceCollapseToggle",
     "sourcePanelContent",
     "summaryCollapseToggle",
+    "compareLeftSelect",
+    "compareRightSelect",
+    "runCompareButton",
+    "compareScore",
+    "compareTags",
+    "compareMasteringOverall",
+    "compareMasteringFlags",
+    "compareDeltaBody",
+    "compareMasteringRecommendations",
+    "compareStatus",
+    "findSimilarButton",
+    "similarStatus",
+    "similarList",
   ];
 
   for (const id of ids) {
@@ -136,6 +159,14 @@ function attachEvents() {
     }
   });
   elements.analyzeButton.addEventListener("click", handleAnalyzeClick);
+  elements.runCompareButton.addEventListener("click", handleCompareClick);
+  elements.findSimilarButton.addEventListener("click", handleFindSimilarClick);
+  elements.compareLeftSelect.addEventListener("change", (event) => {
+    state.compare.leftFile = String(event.target.value || "");
+  });
+  elements.compareRightSelect.addEventListener("change", (event) => {
+    state.compare.rightFile = String(event.target.value || "");
+  });
 }
 
 async function loadDefaultData() {
@@ -193,6 +224,10 @@ function setTracks(tracks, source = {}) {
     ...source,
     fileCount: source.fileCount ?? tracks.length,
   };
+  syncCompareDefaults();
+  renderCompareSelectors();
+  clearComparePanel();
+  clearSimilarList();
   renderDashboard();
 }
 
@@ -513,6 +548,298 @@ function renderDashboard() {
   renderCompactMarkers(selectedTrack);
   renderCompactRecommendations(selectedTrack);
   renderChart(selectedTrack);
+  syncCompareDefaults(selectedTrack);
+  renderCompareSelectors();
+}
+
+function syncCompareDefaults(selectedTrack = null) {
+  const tracks = state.tracks || [];
+  if (!tracks.length) {
+    state.compare.leftFile = "";
+    state.compare.rightFile = "";
+    return;
+  }
+
+  const selected = selectedTrack || state.filteredTracks[state.selectedIndex] || tracks[0];
+  const availableFiles = new Set(tracks.map((track) => track.file));
+
+  if (!availableFiles.has(state.compare.leftFile)) {
+    state.compare.leftFile = selected.file;
+  }
+
+  if (!availableFiles.has(state.compare.rightFile) || state.compare.rightFile === state.compare.leftFile) {
+    const fallback = tracks.find((track) => track.file !== state.compare.leftFile);
+    state.compare.rightFile = fallback?.file || state.compare.leftFile;
+  }
+}
+
+function renderCompareSelectors() {
+  const tracks = state.tracks || [];
+  const optionHtml = tracks
+    .map((track) => {
+      const artist = escapeHtml(track.artist || "Unknown Artist");
+      const title = escapeHtml(track.title || track.file || "Untitled");
+      const file = escapeHtml(track.file || "");
+      return `<option value="${file}">${artist} - ${title}</option>`;
+    })
+    .join("");
+
+  elements.compareLeftSelect.innerHTML = optionHtml;
+  elements.compareRightSelect.innerHTML = optionHtml;
+  elements.compareLeftSelect.value = state.compare.leftFile || "";
+  elements.compareRightSelect.value = state.compare.rightFile || "";
+}
+
+function clearComparePanel() {
+  state.compare.payload = null;
+  elements.compareScore.textContent = "--";
+  elements.compareTags.innerHTML = "";
+  elements.compareMasteringOverall.textContent = "--";
+  elements.compareMasteringFlags.innerHTML = "";
+  elements.compareMasteringRecommendations.innerHTML = "";
+  elements.compareDeltaBody.innerHTML =
+    '<tr><td colspan="4" class="empty-state">Run a compare query to view metric deltas.</td></tr>';
+  setCompareStatus("Ready to compare tracks.", "idle");
+}
+
+function clearSimilarList() {
+  state.similar.results = [];
+  elements.similarList.innerHTML = '<div class="empty-state">No similar results yet.</div>';
+  setSimilarStatus("Run “Find similar” to query /api/similar for this deck track.", "idle");
+}
+
+function setCompareStatus(message, tone) {
+  elements.compareStatus.textContent = message;
+  elements.compareStatus.dataset.tone = tone;
+}
+
+function setSimilarStatus(message, tone) {
+  elements.similarStatus.textContent = message;
+  elements.similarStatus.dataset.tone = tone;
+}
+
+async function fetchCompareFromApi(leftFile, rightFile) {
+  const params = new URLSearchParams({ left: leftFile, right: rightFile });
+  const response = await fetch(`${COMPARE_ENDPOINT}?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+  return response.json();
+}
+
+async function fetchSimilarFromApi(fileName, limit = 6) {
+  const params = new URLSearchParams({ file: fileName, limit: String(limit) });
+  const response = await fetch(`${SIMILAR_ENDPOINT}?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+  return response.json();
+}
+
+function formatSignedNumber(value, decimals = 2, unit = "") {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return "n/a";
+  }
+  const sign = number > 0 ? "+" : number < 0 ? "-" : "";
+  return `${sign}${Math.abs(number).toFixed(decimals)}${unit}`;
+}
+
+function formatMetric(value, decimals = 2, unit = "") {
+  const number = Number(value);
+  if (!Number.isFinite(number)) {
+    return "n/a";
+  }
+  return `${number.toFixed(decimals)}${unit}`;
+}
+
+function trackByFile(file) {
+  return state.tracks.find((track) => String(track.file) === String(file));
+}
+
+function comparisonFeatures(track) {
+  return track?.comparison_features && typeof track.comparison_features === "object"
+    ? track.comparison_features
+    : {};
+}
+
+function renderCompareResult(payload) {
+  state.compare.payload = payload;
+  elements.compareScore.textContent = `${formatMetric(payload?.similarity_score, 1, "%")}`;
+
+  const tags = Array.isArray(payload?.tags) ? payload.tags : [];
+  elements.compareTags.innerHTML = tags
+    .map((tag) => `<span class="pill pill-accent">${escapeHtml(String(tag).replace(/-/g, " "))}</span>`)
+    .join("");
+
+  const mastering = payload?.mastering || {};
+  const masteringOverall = String(mastering.overall || "unknown").toUpperCase();
+  elements.compareMasteringOverall.textContent = masteringOverall;
+
+  const flags = mastering.flags || {};
+  elements.compareMasteringFlags.innerHTML = Object.entries(flags)
+    .slice(0, 4)
+    .map(([name, status]) => {
+      const label = name.replace(/_/g, " ");
+      const tone = status === "pass" ? "pill-good" : status === "warn" ? "pill-warn" : "pill-accent";
+      return `<span class="pill ${tone}">${escapeHtml(label)} ${escapeHtml(String(status))}</span>`;
+    })
+    .join("");
+
+  const recommendations = Array.isArray(mastering.recommendations) ? mastering.recommendations : [];
+  elements.compareMasteringRecommendations.innerHTML = recommendations
+    .map((item) => `<div class="mastering-note">${escapeHtml(item)}</div>`)
+    .join("");
+
+  const leftTrack = trackByFile(payload?.left?.file);
+  const rightTrack = trackByFile(payload?.right?.file);
+  const leftFeatures = comparisonFeatures(leftTrack);
+  const rightFeatures = comparisonFeatures(rightTrack);
+
+  const rows = [
+    {
+      metric: "BPM",
+      left: formatMetric(leftTrack?.bpm, 1),
+      right: formatMetric(rightTrack?.bpm, 1),
+      delta: formatSignedNumber((rightTrack?.bpm || 0) - (leftTrack?.bpm || 0), 1),
+    },
+    {
+      metric: "LUFS",
+      left: formatMetric(leftFeatures?.lufs, 2),
+      right: formatMetric(rightFeatures?.lufs, 2),
+      delta: formatSignedNumber((rightFeatures?.lufs || 0) - (leftFeatures?.lufs || 0), 2),
+    },
+    {
+      metric: "Crest dB",
+      left: formatMetric(leftFeatures?.crest_factor_db, 2),
+      right: formatMetric(rightFeatures?.crest_factor_db, 2),
+      delta: formatSignedNumber((rightFeatures?.crest_factor_db || 0) - (leftFeatures?.crest_factor_db || 0), 2),
+    },
+    {
+      metric: "Centroid Hz",
+      left: formatMetric(leftFeatures?.spectral_centroid_hz, 1),
+      right: formatMetric(rightFeatures?.spectral_centroid_hz, 1),
+      delta: formatSignedNumber((rightFeatures?.spectral_centroid_hz || 0) - (leftFeatures?.spectral_centroid_hz || 0), 1),
+    },
+    {
+      metric: "Bass ratio",
+      left: formatMetric(leftFeatures?.bass_ratio, 3),
+      right: formatMetric(rightFeatures?.bass_ratio, 3),
+      delta: formatSignedNumber((rightFeatures?.bass_ratio || 0) - (leftFeatures?.bass_ratio || 0), 3),
+    },
+    {
+      metric: "Mid ratio",
+      left: formatMetric(leftFeatures?.mid_ratio, 3),
+      right: formatMetric(rightFeatures?.mid_ratio, 3),
+      delta: formatSignedNumber((rightFeatures?.mid_ratio || 0) - (leftFeatures?.mid_ratio || 0), 3),
+    },
+    {
+      metric: "High ratio",
+      left: formatMetric(leftFeatures?.high_ratio, 3),
+      right: formatMetric(rightFeatures?.high_ratio, 3),
+      delta: formatSignedNumber((rightFeatures?.high_ratio || 0) - (leftFeatures?.high_ratio || 0), 3),
+    },
+    {
+      metric: "Key",
+      left: escapeHtml(leftTrack?.camelot || "n/a"),
+      right: escapeHtml(rightTrack?.camelot || "n/a"),
+      delta: escapeHtml(tags.includes("harmonic") ? "harmonic" : "off-lane"),
+    },
+  ];
+
+  elements.compareDeltaBody.innerHTML = rows
+    .map(
+      (row) => `
+        <tr>
+          <td>${escapeHtml(row.metric)}</td>
+          <td>${row.left}</td>
+          <td>${row.right}</td>
+          <td>${row.delta}</td>
+        </tr>
+      `,
+    )
+    .join("");
+}
+
+async function handleCompareClick() {
+  const left = state.compare.leftFile;
+  const right = state.compare.rightFile;
+  if (!left || !right) {
+    setCompareStatus("Select both tracks to compare.", "error");
+    return;
+  }
+  if (left === right) {
+    setCompareStatus("Choose two different tracks for A/B compare.", "error");
+    return;
+  }
+
+  setCompareStatus("Running compare query...", "idle");
+  elements.runCompareButton.disabled = true;
+  try {
+    const payload = await fetchCompareFromApi(left, right);
+    renderCompareResult(payload);
+    setCompareStatus("Compare query complete.", "success");
+  } catch (error) {
+    setCompareStatus(`Compare failed: ${error.message}`, "error");
+  } finally {
+    elements.runCompareButton.disabled = false;
+  }
+}
+
+function renderSimilarResults(payload) {
+  const results = Array.isArray(payload?.results) ? payload.results : [];
+  state.similar.results = results;
+
+  if (!results.length) {
+    elements.similarList.innerHTML = '<div class="empty-state">No similar matches returned.</div>';
+    return;
+  }
+
+  elements.similarList.innerHTML = results
+    .map((item) => {
+      const track = item.track || {};
+      return `
+        <article class="recommendation-card" data-file="${escapeHtml(track.file || "")}">
+          <div class="recommendation-card-top">
+            <div>
+              <h3>${escapeHtml(track.title || track.file || "Unknown")}</h3>
+              <p class="track-artist">${escapeHtml(track.artist || "Unknown Artist")}</p>
+            </div>
+            <div class="score">${formatMetric(item.similarity_score, 1, "%")}</div>
+          </div>
+          <div class="recommendation-meta">
+            ${escapeHtml(track.camelot || "n/a")} · ${formatMetric(track.bpm, 1, " BPM")}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  elements.similarList.querySelectorAll(".recommendation-card").forEach((card) => {
+    card.addEventListener("click", async () => {
+      await selectTrackByFile(card.dataset.file);
+    });
+  });
+}
+
+async function handleFindSimilarClick() {
+  const selectedTrack = state.filteredTracks[state.selectedIndex];
+  if (!selectedTrack?.file) {
+    setSimilarStatus("Select a track before running similar search.", "error");
+    return;
+  }
+
+  setSimilarStatus("Running /api/similar query...", "idle");
+  elements.findSimilarButton.disabled = true;
+  try {
+    const payload = await fetchSimilarFromApi(selectedTrack.file, 6);
+    renderSimilarResults(payload);
+    setSimilarStatus(`Found ${payload.results?.length || 0} similar matches.`, "success");
+  } catch (error) {
+    setSimilarStatus(`Similar query failed: ${error.message}`, "error");
+  } finally {
+    elements.findSimilarButton.disabled = false;
+  }
 }
 
 function renderSummary() {

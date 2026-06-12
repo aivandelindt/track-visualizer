@@ -88,24 +88,24 @@ Recommended libraries and methods:
 
 ### Phase 3: Mastering Review Features
 
-- [ ] T3.1 Add mastering thresholds config (`docs` + server constants):
+- [x] T3.1 Add mastering thresholds config (`docs` + server constants):
   - Target LUFS around `-14` for streaming.
   - Crest factor warning threshold.
   - Clipping ratio warning threshold.
   - Acceptance: thresholds configurable without changing extraction code.
 
-- [ ] T3.2 Implement reference-track comparison mode.
+- [x] T3.2 Implement reference-track comparison mode.
   - Acceptance: response includes pass/warn/fail flags for loudness, dynamic range, and brightness delta.
 
-- [ ] T3.3 Add mix/mastering recommendation text generator (short deterministic rules).
+- [x] T3.3 Add mix/mastering recommendation text generator (short deterministic rules).
   - Acceptance: deterministic output for same metrics input.
 
 ### Phase 4: Dashboard UI Tasks
 
-- [ ] T4.1 Add compare panel (select track A/B from current library).
+- [x] T4.1 Add compare panel (select track A/B from current library).
   - Acceptance: compare action calls `/api/compare` and renders score.
 
-- [ ] T4.2 Add metrics delta table (LUFS, crest, centroid, bass/mid/high, BPM, key).
+- [x] T4.2 Add metrics delta table (LUFS, crest, centroid, bass/mid/high, BPM, key).
   - Acceptance: all deltas display with clear units and sign.
 
 - [ ] T4.3 Add visual comparison charts:
@@ -114,7 +114,7 @@ Recommended libraries and methods:
   - Optional MFCC similarity gauge.
   - Acceptance: charts render for any two valid tracks without console errors.
 
-- [ ] T4.4 Add “Find similar tracks” action in selected-track deck.
+- [x] T4.4 Add “Find similar tracks” action in selected-track deck.
   - Acceptance: top matches list updates and links to track selection.
 
 ### Phase 5: DJ Workflow Features

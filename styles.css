@@ -780,6 +780,128 @@ p {
   gap: 12px;
 }
 
+.compare-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.compare-controls {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+}
+
+.compare-picker {
+  display: grid;
+  gap: 8px;
+}
+
+.compare-picker span {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.compare-picker select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px 12px;
+}
+
+.compare-btn {
+  min-height: 44px;
+}
+
+.compare-score-row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.compare-score-card {
+  min-height: 120px;
+}
+
+.compare-table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+  font-size: 0.86rem;
+}
+
+.compare-table th,
+.compare-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.compare-table th {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.compare-table td:last-child {
+  font-family: var(--mono);
+}
+
+.compare-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.compare-status[data-tone="error"] {
+  color: #ffb1a8;
+}
+
+.compare-status[data-tone="success"] {
+  color: #c7f8e5;
+}
+
+.compare-recommendations {
+  display: grid;
+  gap: 8px;
+}
+
+.mastering-note {
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.similar-panel .structure-header {
+  align-items: center;
+}
+
+.similar-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .recommendation-card {
   padding: 16px;
   border-radius: var(--radius-lg);
@@ -915,6 +1037,8 @@ p {
   .workspace-grid,
   .summary-grid,
   .deck-metrics,
+  .compare-controls,
+  .compare-score-row,
   .analysis-toolbar,
   .source-meta-row {
     grid-template-columns: 1fr;
