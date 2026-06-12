@@ -25,6 +25,15 @@ TINYDB_PATH = ROOT / "output" / "track_cache.json"
 
 FILTER_IDS = {"all", "high-energy", "trancey", "slow-burn"}
 MAX_SIMILAR_LIMIT = 50
+MAX_PLAYLIST_LIMIT = 25
+
+DJ_TRANSITION_THRESHOLDS = {
+    "straight_mix_bpm_delta": 2.0,
+    "small_nudge_bpm_delta": 6.0,
+    "tempo_risk_bpm_delta": 10.0,
+    "energy_shift_delta": 1.5,
+    "energy_risk_delta": 3.0,
+}
 
 MASTERING_THRESHOLDS = {
     "target_lufs": -14.0,
@@ -379,9 +388,9 @@ def _cosine_similarity(left, right):
     if not left or not right or len(left) != len(right):
         return 0.0
 
-    dot = sum(l * r for l, r in zip(left, right))
-    left_norm = math.sqrt(sum(l * l for l in left))
-    right_norm = math.sqrt(sum(r * r for r in right))
+    dot = sum(left_value * right_value for left_value, right_value in zip(left, right))
+    left_norm = math.sqrt(sum(left_value * left_value for left_value in left))
+    right_norm = math.sqrt(sum(right_value * right_value for right_value in right))
     if left_norm <= 1e-12 or right_norm <= 1e-12:
         return 0.0
     cosine = dot / (left_norm * right_norm)
@@ -401,7 +410,12 @@ def _spectral_similarity_score(left_track, right_track):
         _safe_float(right_features.get("mid_ratio")),
         _safe_float(right_features.get("high_ratio")),
     ]
-    distance = math.sqrt(sum((l - r) ** 2 for l, r in zip(left, right)))
+    distance = math.sqrt(
+        sum(
+            (left_value - right_value) ** 2
+            for left_value, right_value in zip(left, right)
+        )
+    )
     max_distance = math.sqrt(3.0)
     return _clamp01(1.0 - (distance / max_distance))
 
@@ -413,6 +427,114 @@ def _tempo_similarity_score(left_track, right_track):
         return 0.0
     bpm_delta = abs(left_bpm - right_bpm)
     return _clamp01(1.0 - (bpm_delta / 25.0))
+
+
+def _bpm_transition_recommendation(left_track, right_track):
+    thresholds = dict(DJ_TRANSITION_THRESHOLDS)
+    bpm_delta = abs(
+        _safe_float(left_track.get("bpm"), default=0.0)
+        - _safe_float(right_track.get("bpm"), default=0.0)
+    )
+
+    if bpm_delta <= thresholds["straight_mix_bpm_delta"]:
+        recommendation = "straight mix"
+        tag = "tempo-safe"
+    elif bpm_delta <= thresholds["small_nudge_bpm_delta"]:
+        recommendation = "small nudge"
+        tag = "tempo-nudge"
+    else:
+        recommendation = "risky"
+        tag = "tempo-risk"
+
+    return {
+        "recommendation": recommendation,
+        "bpm_delta": round(bpm_delta, 3),
+        "thresholds": {
+            "straight_mix_max_delta": thresholds["straight_mix_bpm_delta"],
+            "small_nudge_max_delta": thresholds["small_nudge_bpm_delta"],
+            "tempo_risk_min_delta": thresholds["tempo_risk_bpm_delta"],
+        },
+        "tag": tag,
+    }
+
+
+def _energy_transition_profile(left_track, right_track):
+    thresholds = dict(DJ_TRANSITION_THRESHOLDS)
+    left_energy = _safe_float(left_track.get("avg_energy_level"), default=0.0)
+    right_energy = _safe_float(right_track.get("avg_energy_level"), default=0.0)
+    delta = abs(right_energy - left_energy)
+
+    if delta <= thresholds["energy_shift_delta"]:
+        classification = "steady"
+        tag = "energy-steady"
+    elif delta <= thresholds["energy_risk_delta"]:
+        classification = "energy-shift"
+        tag = "energy-shift"
+    else:
+        classification = "energy-risk"
+        tag = "energy-risk"
+
+    direction = "flat"
+    if right_energy > left_energy:
+        direction = "up"
+    elif right_energy < left_energy:
+        direction = "down"
+
+    return {
+        "classification": classification,
+        "direction": direction,
+        "energy_delta": round(delta, 3),
+        "thresholds": {
+            "energy_shift_max_delta": thresholds["energy_shift_delta"],
+            "energy_risk_min_delta": thresholds["energy_risk_delta"],
+        },
+        "tag": tag,
+    }
+
+
+def _harmonic_transition_profile(left_track, right_track):
+    score = _camelot_distance_score(
+        left_track.get("camelot"), right_track.get("camelot")
+    )
+    compatible = score >= 0.82
+    if score >= 0.9:
+        relation = "neighbor-compatible"
+    elif score >= 0.82:
+        relation = "relative-compatible"
+    elif score >= 0.5:
+        relation = "workable"
+    else:
+        relation = "off-lane"
+
+    return {
+        "compatible": compatible,
+        "score": round(score, 4),
+        "relation": relation,
+        "tag": "harmonic" if compatible else "harmonic-risk",
+    }
+
+
+def _dj_workflow_profile(left_track, right_track):
+    harmonic = _harmonic_transition_profile(left_track, right_track)
+    bpm_transition = _bpm_transition_recommendation(left_track, right_track)
+    energy_transition = _energy_transition_profile(left_track, right_track)
+
+    tags = []
+    for tag in [
+        harmonic.get("tag"),
+        energy_transition.get("tag"),
+        bpm_transition.get("tag"),
+    ]:
+        if tag and tag not in tags:
+            tags.append(tag)
+
+    return {
+        "harmonic_mix": harmonic.get("compatible", False),
+        "harmonic": harmonic,
+        "bpm_transition": bpm_transition,
+        "energy_transition": energy_transition,
+        "tags": tags,
+    }
 
 
 def _loudness_dynamics_score(left_track, right_track):
@@ -661,6 +783,11 @@ def _compare_tracks(left_track, right_track):
     if loudness_score < 0.5:
         tags.append("loudness-mismatch")
 
+    dj_workflow = _dj_workflow_profile(left_track, right_track)
+    for dj_tag in dj_workflow.get("tags", []):
+        if dj_tag not in tags:
+            tags.append(dj_tag)
+
     components = {
         "timbre": round(timbre_score, 4),
         "spectral": round(spectral_score, 4),
@@ -676,6 +803,7 @@ def _compare_tracks(left_track, right_track):
         "components": components,
         "deltas": deltas,
         "tags": tags,
+        "dj_workflow": dj_workflow,
         "mastering": mastering,
         "vector_stats": {
             "left_length": len(left_vector),
@@ -722,6 +850,7 @@ def similar_tracks_for_file(file_name, limit=10):
                 "similarity_score": compared["similarity_score"],
                 "components": compared["components"],
                 "tags": compared["tags"],
+                "dj_workflow": compared["dj_workflow"],
             }
         )
 
@@ -735,6 +864,114 @@ def similar_tracks_for_file(file_name, limit=10):
     return {
         "source": _track_identity(base_track),
         "results": candidates[:limit],
+    }
+
+
+def _playlist_transition_score(current_track, candidate_track, compared_payload):
+    dj = compared_payload.get("dj_workflow", {})
+    bpm_transition = dj.get("bpm_transition", {})
+    energy_transition = dj.get("energy_transition", {})
+
+    bpm_delta = _safe_float(bpm_transition.get("bpm_delta"), default=0.0)
+    energy_delta = _safe_float(energy_transition.get("energy_delta"), default=0.0)
+    similarity = (
+        _safe_float(compared_payload.get("similarity_score"), default=0.0) / 100.0
+    )
+
+    bpm_penalty = _clamp01(bpm_delta / 12.0)
+    energy_penalty = _clamp01(energy_delta / 4.0)
+    transition_safety = _clamp01(1.0 - ((0.6 * bpm_penalty) + (0.4 * energy_penalty)))
+
+    score = (0.62 * similarity) + (0.38 * transition_safety)
+
+    if "tempo-risk" in dj.get("tags", []):
+        score -= 0.12
+    if "energy-risk" in dj.get("tags", []):
+        score -= 0.09
+    if not dj.get("harmonic_mix"):
+        score -= 0.05
+
+    hard_jump = bpm_delta > 10.0 or energy_delta > 3.0
+    if hard_jump:
+        score -= 0.12
+
+    return {
+        "score": round(score, 5),
+        "hard_jump": hard_jump,
+    }
+
+
+def playlist_seed_for_file(file_name, limit=8):
+    seed_track = _find_track_by_file(file_name)
+    if seed_track is None:
+        raise ValueError(f"Unknown track: {file_name}")
+
+    ensure_seed_data()
+    remaining = []
+    for record in TRACKS_TABLE.all():
+        candidate = _sanitize_track(record)
+        if str(candidate.get("file", "")) == str(seed_track.get("file", "")):
+            continue
+        remaining.append(candidate)
+
+    ordered_tracks = [_track_identity(seed_track)]
+    transitions = []
+    current_track = seed_track
+    used_files = {str(seed_track.get("file", ""))}
+
+    while len(ordered_tracks) < limit and remaining:
+        scored = []
+        for candidate in remaining:
+            candidate_file = str(candidate.get("file", ""))
+            if candidate_file in used_files:
+                continue
+
+            compared = _compare_tracks(current_track, candidate)
+            ranking = _playlist_transition_score(current_track, candidate, compared)
+            scored.append(
+                {
+                    "candidate": candidate,
+                    "compared": compared,
+                    "ranking": ranking,
+                }
+            )
+
+        if not scored:
+            break
+
+        scored.sort(
+            key=lambda item: (
+                item["ranking"]["hard_jump"],
+                -_safe_float(item["ranking"]["score"], default=0.0),
+                -_safe_float(item["compared"].get("similarity_score"), default=0.0),
+                str(item["candidate"].get("artist", "")).lower(),
+                str(item["candidate"].get("title", "")).lower(),
+            )
+        )
+
+        winner = scored[0]
+        chosen_track = winner["candidate"]
+        chosen_identity = _track_identity(chosen_track)
+        ordered_tracks.append(chosen_identity)
+        transitions.append(
+            {
+                "from": _track_identity(current_track),
+                "to": chosen_identity,
+                "similarity_score": winner["compared"].get("similarity_score"),
+                "components": winner["compared"].get("components"),
+                "dj_workflow": winner["compared"].get("dj_workflow"),
+                "tags": winner["compared"].get("tags", []),
+                "ranking": winner["ranking"],
+            }
+        )
+
+        current_track = chosen_track
+        used_files.add(str(chosen_track.get("file", "")))
+
+    return {
+        "source": _track_identity(seed_track),
+        "playlist": ordered_tracks,
+        "transitions": transitions,
     }
 
 
@@ -785,6 +1022,18 @@ class AnalyzerHandler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/similar":
             try:
                 self.handle_similar_query(parsed.query)
+            except ValueError as error:
+                self.send_json({"error": str(error)}, status=400)
+            except Exception as error:
+                self.send_json(
+                    {"error": f"Unexpected server error: {error}"},
+                    status=500,
+                )
+            return
+
+        if parsed.path == "/api/playlist-seed":
+            try:
+                self.handle_playlist_seed_query(parsed.query)
             except ValueError as error:
                 self.send_json({"error": str(error)}, status=400)
             except Exception as error:
@@ -912,6 +1161,35 @@ class AnalyzerHandler(SimpleHTTPRequestHandler):
             raise ValueError(f"Parameter 'limit' must be <= {MAX_SIMILAR_LIMIT}.")
 
         payload = similar_tracks_for_file(file_name=file_name, limit=limit)
+        self.send_json(
+            {
+                **payload,
+                "query": {
+                    "file": file_name,
+                    "limit": limit,
+                },
+            }
+        )
+
+    def handle_playlist_seed_query(self, query_string):
+        query_params = parse_qs(query_string)
+        file_name = query_params.get("file", [""])[0]
+        limit_raw = query_params.get("limit", ["8"])[0]
+
+        if not file_name:
+            raise ValueError("Parameter 'file' is required.")
+
+        try:
+            limit = int(limit_raw)
+        except ValueError:
+            raise ValueError("Parameter 'limit' must be an integer.") from None
+
+        if limit < 2:
+            raise ValueError("Parameter 'limit' must be >= 2.")
+        if limit > MAX_PLAYLIST_LIMIT:
+            raise ValueError(f"Parameter 'limit' must be <= {MAX_PLAYLIST_LIMIT}.")
+
+        payload = playlist_seed_for_file(file_name=file_name, limit=limit)
         self.send_json(
             {
                 **payload,

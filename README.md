@@ -11,6 +11,9 @@ Deck-style visualizer for Beatport tracklist analysis JSON. The dashboard reads 
 - Energy timeline with structure markers
 - Mix recommendations based on harmonic and tempo compatibility
 - Folder upload workflow for fresh analysis through `POST /api/analyze`
+- A/B compare scoring through `GET /api/compare`
+- Similar-track ranking through `GET /api/similar`
+- Playlist seed progression generation through `GET /api/playlist-seed`
 
 ## Run it
 
@@ -61,6 +64,97 @@ Supported filter ids match the UI controls:
 - `high-energy`
 - `trancey`
 - `slow-burn`
+
+## Comparison and recommendation endpoints
+
+The dashboard and API support track-to-track DJ workflow analysis:
+
+- `GET /api/compare?left=<file>&right=<file>`
+- `GET /api/similar?file=<file>&limit=10`
+- `GET /api/playlist-seed?file=<file>&limit=8`
+
+### `GET /api/compare`
+
+Returns pairwise metrics for one track pair:
+
+- `similarity_score` (0-100)
+- `components` (`timbre`, `spectral`, `tempo`, `key`, `loudness_dynamics`)
+- `deltas` (`bpm`, `lufs`, `lra_lu`, `crest_factor_db`, `spectral_centroid_hz`)
+- `tags` (for example: `harmonic`, `tempo-safe`, `energy-shift`, `tempo-risk`)
+- `mastering` (`overall`, `flags`, `recommendations`, `thresholds`)
+- `dj_workflow` (transition guidance fields, documented below)
+
+### `GET /api/similar`
+
+Returns top matches for a source track, sorted by descending `similarity_score`.
+Each result includes:
+
+- `track` identity metadata
+- `similarity_score`
+- `components`
+- `tags`
+- `dj_workflow`
+
+### `GET /api/playlist-seed`
+
+Builds an ordered progression from a seed track while penalizing abrupt transitions.
+
+Constraints:
+
+- `limit >= 2`
+- `limit <= 25`
+
+Response includes:
+
+- `source` (seed track identity)
+- `playlist` (ordered track identities)
+- `transitions` (one per hop)
+
+Each transition includes:
+
+- `similarity_score`
+- `components`
+- `tags`
+- `dj_workflow`
+- `ranking` (`score`, `hard_jump`)
+
+## DJ workflow payload (`dj_workflow`)
+
+The `dj_workflow` object appears in compare/similar/playlist responses:
+
+- `harmonic_mix`: boolean quick flag for harmonic compatibility
+- `harmonic`:
+	- `compatible`
+	- `score`
+	- `relation` (`neighbor-compatible`, `relative-compatible`, `workable`, `off-lane`)
+	- `tag` (`harmonic` or `harmonic-risk`)
+- `bpm_transition`:
+	- `recommendation` (`straight mix`, `small nudge`, `risky`)
+	- `bpm_delta`
+	- `thresholds`
+	- `tag` (`tempo-safe`, `tempo-nudge`, `tempo-risk`)
+- `energy_transition`:
+	- `classification` (`steady`, `energy-shift`, `energy-risk`)
+	- `direction` (`up`, `down`, `flat`)
+	- `energy_delta`
+	- `thresholds`
+	- `tag`
+- `tags`: deduplicated workflow tags for rendering and rule checks
+
+## Testing
+
+Run the server unit/API behavior tests:
+
+```bash
+./.venv/bin/python -m unittest discover -s tests -v
+```
+
+Current test coverage includes:
+
+- Unit behavior for compare and transition classification helpers
+- Sorted similar-track behavior and source exclusion
+- Playlist seed progression and transition payload shape
+- API handler validation and response shape for compare/similar/playlist-seed
 
 ## Repository layout
 

@@ -3,6 +3,7 @@ const ANALYZE_ENDPOINT = "/api/analyze";
 const TRACKS_ENDPOINT = "/api/tracks";
 const COMPARE_ENDPOINT = "/api/compare";
 const SIMILAR_ENDPOINT = "/api/similar";
+const PLAYLIST_SEED_ENDPOINT = "/api/playlist-seed";
 
 const filters = [
   { id: "all", label: "All" },
@@ -45,6 +46,10 @@ const state = {
   },
   similar: {
     results: [],
+  },
+  playlistSeed: {
+    items: [],
+    transitions: [],
   },
 };
 
@@ -105,8 +110,11 @@ function cacheElements() {
     "compareMasteringRecommendations",
     "compareStatus",
     "findSimilarButton",
+    "buildPlaylistButton",
     "similarStatus",
     "similarList",
+    "playlistStatus",
+    "playlistList",
   ];
 
   for (const id of ids) {
@@ -165,6 +173,7 @@ function attachEvents() {
   elements.analyzeButton.addEventListener("click", handleAnalyzeClick);
   elements.runCompareButton.addEventListener("click", handleCompareClick);
   elements.findSimilarButton.addEventListener("click", handleFindSimilarClick);
+  elements.buildPlaylistButton.addEventListener("click", handleBuildPlaylistClick);
   elements.compareLeftSelect.addEventListener("change", (event) => {
     state.compare.leftFile = String(event.target.value || "");
   });
@@ -232,6 +241,7 @@ function setTracks(tracks, source = {}) {
   renderCompareSelectors();
   clearComparePanel();
   clearSimilarList();
+  clearPlaylistSeedList();
   renderDashboard();
 }
 
@@ -690,6 +700,13 @@ function clearSimilarList() {
   setSimilarStatus("Run “Find similar” to query /api/similar for this deck track.", "idle");
 }
 
+function clearPlaylistSeedList() {
+  state.playlistSeed.items = [];
+  state.playlistSeed.transitions = [];
+  elements.playlistList.innerHTML = '<div class="empty-state">No playlist progression yet.</div>';
+  setPlaylistStatus("Run “Build playlist seed” to generate a compatible progression.", "idle");
+}
+
 function setCompareStatus(message, tone) {
   elements.compareStatus.textContent = message;
   elements.compareStatus.dataset.tone = tone;
@@ -698,6 +715,11 @@ function setCompareStatus(message, tone) {
 function setSimilarStatus(message, tone) {
   elements.similarStatus.textContent = message;
   elements.similarStatus.dataset.tone = tone;
+}
+
+function setPlaylistStatus(message, tone) {
+  elements.playlistStatus.textContent = message;
+  elements.playlistStatus.dataset.tone = tone;
 }
 
 async function fetchCompareFromApi(leftFile, rightFile) {
@@ -712,6 +734,15 @@ async function fetchCompareFromApi(leftFile, rightFile) {
 async function fetchSimilarFromApi(fileName, limit = 6) {
   const params = new URLSearchParams({ file: fileName, limit: String(limit) });
   const response = await fetch(`${SIMILAR_ENDPOINT}?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(await readErrorMessage(response));
+  }
+  return response.json();
+}
+
+async function fetchPlaylistSeedFromApi(fileName, limit = 8) {
+  const params = new URLSearchParams({ file: fileName, limit: String(limit) });
+  const response = await fetch(`${PLAYLIST_SEED_ENDPOINT}?${params.toString()}`);
   if (!response.ok) {
     throw new Error(await readErrorMessage(response));
   }
@@ -751,7 +782,10 @@ function renderCompareResult(payload) {
 
   const tags = Array.isArray(payload?.tags) ? payload.tags : [];
   elements.compareTags.innerHTML = tags
-    .map((tag) => `<span class="pill pill-accent">${escapeHtml(String(tag).replace(/-/g, " "))}</span>`)
+    .map((tag) => {
+      const tone = tag.includes("risk") ? "pill-warn" : tag === "harmonic" ? "pill-good" : "pill-accent";
+      return `<span class="pill ${tone}">${escapeHtml(String(tag).replace(/-/g, " "))}</span>`;
+    })
     .join("");
 
   const mastering = payload?.mastering || {};
@@ -828,7 +862,13 @@ function renderCompareResult(payload) {
       metric: "Key",
       left: escapeHtml(leftTrack?.camelot || "n/a"),
       right: escapeHtml(rightTrack?.camelot || "n/a"),
-      delta: escapeHtml(tags.includes("harmonic") ? "harmonic" : "off-lane"),
+      delta: escapeHtml(payload?.dj_workflow?.harmonic_mix ? "harmonic" : "off-lane"),
+    },
+    {
+      metric: "Transition",
+      left: "A → B",
+      right: escapeHtml(payload?.dj_workflow?.bpm_transition?.recommendation || "n/a"),
+      delta: escapeHtml(payload?.dj_workflow?.energy_transition?.classification || "n/a"),
     },
   ];
 
@@ -894,6 +934,11 @@ function renderSimilarResults(payload) {
           </div>
           <div class="recommendation-meta">
             ${escapeHtml(track.camelot || "n/a")} · ${formatMetric(track.bpm, 1, " BPM")}
+            <br />
+            ${(Array.isArray(item.tags) ? item.tags : [])
+              .slice(0, 3)
+              .map((tag) => escapeHtml(String(tag).replace(/-/g, " ")))
+              .join(" · ")}
           </div>
         </article>
       `;
@@ -924,6 +969,73 @@ async function handleFindSimilarClick() {
     setSimilarStatus(`Similar query failed: ${error.message}`, "error");
   } finally {
     elements.findSimilarButton.disabled = false;
+  }
+}
+
+function renderPlaylistSeed(payload) {
+  const playlist = Array.isArray(payload?.playlist) ? payload.playlist : [];
+  const transitions = Array.isArray(payload?.transitions) ? payload.transitions : [];
+
+  state.playlistSeed.items = playlist;
+  state.playlistSeed.transitions = transitions;
+
+  if (!playlist.length) {
+    elements.playlistList.innerHTML = '<div class="empty-state">No playlist progression returned.</div>';
+    return;
+  }
+
+  elements.playlistList.innerHTML = playlist
+    .map((track, index) => {
+      const transition = index > 0 ? transitions[index - 1] : null;
+      const transitionLabel = transition?.dj_workflow?.bpm_transition?.recommendation || "seed";
+      const energyLabel = transition?.dj_workflow?.energy_transition?.classification || "start";
+      const tags = Array.isArray(transition?.dj_workflow?.tags) ? transition.dj_workflow.tags : [];
+
+      return `
+        <article class="recommendation-card playlist-seed-card" data-file="${escapeHtml(track.file || "")}">
+          <div class="recommendation-card-top">
+            <div>
+              <h3>#${index + 1} ${escapeHtml(track.title || track.file || "Unknown")}</h3>
+              <p class="track-artist">${escapeHtml(track.artist || "Unknown Artist")}</p>
+            </div>
+            <div class="score">${formatMetric(track.bpm, 1, " BPM")}</div>
+          </div>
+          <div class="recommendation-meta">
+            ${escapeHtml(track.camelot || "n/a")} · ${escapeHtml(transitionLabel)} · ${escapeHtml(energyLabel)}
+            ${tags.length ? `<br />${tags.slice(0, 3).map((tag) => escapeHtml(String(tag).replace(/-/g, " "))).join(" · ")}` : ""}
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  elements.playlistList.querySelectorAll(".playlist-seed-card").forEach((card) => {
+    card.addEventListener("click", async () => {
+      await selectTrackByFile(card.dataset.file);
+    });
+  });
+}
+
+async function handleBuildPlaylistClick() {
+  const selectedTrack = state.filteredTracks[state.selectedIndex];
+  if (!selectedTrack?.file) {
+    setPlaylistStatus("Select a track before building a playlist seed.", "error");
+    return;
+  }
+
+  setPlaylistStatus("Building playlist progression from selected seed...", "idle");
+  elements.buildPlaylistButton.disabled = true;
+  try {
+    const payload = await fetchPlaylistSeedFromApi(selectedTrack.file, 8);
+    renderPlaylistSeed(payload);
+    setPlaylistStatus(
+      `Generated ${payload.playlist?.length || 0} tracks with ${payload.transitions?.length || 0} transitions.`,
+      "success",
+    );
+  } catch (error) {
+    setPlaylistStatus(`Playlist seed failed: ${error.message}`, "error");
+  } finally {
+    elements.buildPlaylistButton.disabled = false;
   }
 }
 

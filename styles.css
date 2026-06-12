@@ -967,6 +967,14 @@ p {
   color: #c7f8e5;
 }
 
+#playlistStatus[data-tone="error"] {
+  color: #ffb1a8;
+}
+
+#playlistStatus[data-tone="success"] {
+  color: #c7f8e5;
+}
+
 .compare-recommendations {
   display: grid;
   gap: 8px;
@@ -996,6 +1004,10 @@ p {
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
   border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.playlist-seed-card {
+  border-color: rgba(76, 215, 165, 0.22);
 }
 
 .recommendation-card-top {

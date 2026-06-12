@@ -119,13 +119,13 @@ Recommended libraries and methods:
 
 ### Phase 5: DJ Workflow Features
 
-- [ ] T5.1 Add harmonic mixing compatibility classifier from Camelot neighbors.
+- [x] T5.1 Add harmonic mixing compatibility classifier from Camelot neighbors.
   - Acceptance: tags include `harmonic`, `energy-shift`, `tempo-risk`.
 
-- [ ] T5.2 Add BPM transition recommendation (`straight mix`, `small nudge`, `risky`).
+- [x] T5.2 Add BPM transition recommendation (`straight mix`, `small nudge`, `risky`).
   - Acceptance: thresholds documented and visible in API output.
 
-- [ ] T5.3 Add playlist seed mode (pick one track, return a progression of compatible tracks).
+- [x] T5.3 Add playlist seed mode (pick one track, return a progression of compatible tracks).
   - Acceptance: ordered list avoids sharp consecutive energy and BPM jumps.
 
 ### Phase 6: Optional ML Extension
@@ -143,13 +143,13 @@ Recommended libraries and methods:
 - [ ] T7.1 Add unit tests for new metric functions (synthetic fixtures).
   - Acceptance: deterministic assertions for LUFS, crest, spectrum ratios, clipping proxy.
 
-- [ ] T7.2 Add API tests for `/api/compare` and `/api/similar`.
+- [x] T7.2 Add API tests for `/api/compare` and `/api/similar`.
   - Acceptance: expected shape and sort order verified.
 
 - [ ] T7.3 Add per-file feature cache key (file hash + analysis version).
   - Acceptance: unchanged files skip recomputation.
 
-- [ ] T7.4 Update README with new endpoints, metric meanings, and caveats.
+- [x] T7.4 Update README with new endpoints, metric meanings, and caveats.
   - Acceptance: user can run compare workflow end-to-end from docs.
 
 ## Suggested Build Order (Fastest Value)
