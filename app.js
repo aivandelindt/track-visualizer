@@ -961,6 +961,10 @@ function renderSimilarResults(payload) {
   elements.similarList.innerHTML = results
     .map((item) => {
       const track = item.track || {};
+      const camelotClr = camelotColor(track.camelot);
+      const tags = (Array.isArray(item.tags) ? item.tags : [])
+        .slice(0, 3)
+        .map((tag) => escapeHtml(String(tag).replace(/-/g, " ")));
       return `
         <article class="recommendation-card" data-file="${escapeHtml(track.file || "")}">
           <div class="recommendation-card-top">
@@ -968,15 +972,14 @@ function renderSimilarResults(payload) {
               <h3>${escapeHtml(track.title || track.file || "Unknown")}</h3>
               <p class="track-artist">${escapeHtml(track.artist || "Unknown Artist")}</p>
             </div>
-            <div class="score">${formatMetric(item.similarity_score, 1, "%")}</div>
+            <div class="recommendation-score-stack">
+              <span class="recommendation-key-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${escapeHtml(track.camelot || "n/a")}</span>
+              <div class="score">${formatMetric(item.similarity_score, 1, "%")}</div>
+            </div>
           </div>
           <div class="recommendation-meta">
-            ${escapeHtml(track.camelot || "n/a")} · ${formatMetric(track.bpm, 1, " BPM")}
-            <br />
-            ${(Array.isArray(item.tags) ? item.tags : [])
-              .slice(0, 3)
-              .map((tag) => escapeHtml(String(tag).replace(/-/g, " ")))
-              .join(" · ")}
+            <span class="recommendation-meta-item">${formatMetric(track.bpm, 1, " BPM")}</span>
+            ${tags.map((tag) => `<span class="recommendation-meta-item">${tag}</span>`).join("")}
           </div>
         </article>
       `;
@@ -1028,6 +1031,7 @@ function renderPlaylistSeed(payload) {
       const transitionLabel = transition?.dj_workflow?.bpm_transition?.recommendation || "seed";
       const energyLabel = transition?.dj_workflow?.energy_transition?.classification || "start";
       const tags = Array.isArray(transition?.dj_workflow?.tags) ? transition.dj_workflow.tags : [];
+      const camelotClr = camelotColor(track.camelot);
 
       return `
         <article class="recommendation-card playlist-seed-card" data-file="${escapeHtml(track.file || "")}">
@@ -1036,11 +1040,15 @@ function renderPlaylistSeed(payload) {
               <h3>#${index + 1} ${escapeHtml(track.title || track.file || "Unknown")}</h3>
               <p class="track-artist">${escapeHtml(track.artist || "Unknown Artist")}</p>
             </div>
-            <div class="score">${formatMetric(track.bpm, 1, " BPM")}</div>
+            <div class="recommendation-score-stack">
+              <span class="recommendation-key-chip" style="background:${camelotClr.bg};color:${camelotClr.text}">${escapeHtml(track.camelot || "n/a")}</span>
+              <div class="score">${formatMetric(track.bpm, 1, " BPM")}</div>
+            </div>
           </div>
           <div class="recommendation-meta">
-            ${escapeHtml(track.camelot || "n/a")} · ${escapeHtml(transitionLabel)} · ${escapeHtml(energyLabel)}
-            ${tags.length ? `<br />${tags.slice(0, 3).map((tag) => escapeHtml(String(tag).replace(/-/g, " "))).join(" · ")}` : ""}
+            <span class="recommendation-meta-item">${escapeHtml(transitionLabel)}</span>
+            <span class="recommendation-meta-item">${escapeHtml(energyLabel)}</span>
+            ${tags.slice(0, 3).map((tag) => `<span class="recommendation-meta-item">${escapeHtml(String(tag).replace(/-/g, " "))}</span>`).join("")}
           </div>
         </article>
       `;
@@ -1316,9 +1324,10 @@ function renderRecommendations(track) {
             <div class="score">${score.toFixed(0)}%</div>
           </div>
           <div class="recommendation-meta">
-            ${candidate.camelot} · ${candidate.key} · ${candidate.bpm.toFixed(1)} BPM
-            <br />
-            ${harmonics}
+            <span class="recommendation-meta-item">${escapeHtml(candidate.camelot)}</span>
+            <span class="recommendation-meta-item">${escapeHtml(candidate.key)}</span>
+            <span class="recommendation-meta-item">${candidate.bpm.toFixed(1)} BPM</span>
+            <span class="recommendation-meta-item recommendation-meta-note">${harmonics}</span>
           </div>
         </article>
       `;

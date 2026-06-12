@@ -145,23 +145,25 @@
 
           <div class="cue-strip" id="cueStrip"></div>
 
-          <section class="structure-panel similar-panel">
-            <div class="structure-header">
-              <h3>Similar matches</h3>
-              <button class="filter-btn" id="findSimilarButton" type="button">Find similar</button>
-            </div>
-            <p class="compare-status" id="similarStatus">Run “Find similar” to query /api/similar for this deck track.</p>
-            <div class="similar-list" id="similarList"></div>
-          </section>
+          <div class="similar-panels-grid">
+            <section class="structure-panel similar-panel">
+              <div class="structure-header">
+                <h3>Similar matches</h3>
+                <button class="filter-btn" id="findSimilarButton" type="button">Find similar</button>
+              </div>
+              <p class="compare-status" id="similarStatus">Run “Find similar” to query /api/similar for this deck track.</p>
+              <div class="similar-list" id="similarList"></div>
+            </section>
 
-          <section class="structure-panel similar-panel">
-            <div class="structure-header">
-              <h3>Playlist seed mode</h3>
-              <button class="filter-btn" id="buildPlaylistButton" type="button">Build playlist seed</button>
-            </div>
-            <p class="compare-status" id="playlistStatus">Run “Build playlist seed” to generate a compatible progression.</p>
-            <div class="similar-list" id="playlistList"></div>
-          </section>
+            <section class="structure-panel similar-panel">
+              <div class="structure-header">
+                <h3>Playlist seed mode</h3>
+                <button class="filter-btn" id="buildPlaylistButton" type="button">Build playlist seed</button>
+              </div>
+              <p class="compare-status" id="playlistStatus">Run “Build playlist seed” to generate a compatible progression.</p>
+              <div class="similar-list" id="playlistList"></div>
+            </section>
+          </div>
         </section>
       </section>
 
