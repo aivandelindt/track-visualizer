@@ -108,7 +108,7 @@ Recommended libraries and methods:
 - [x] T4.2 Add metrics delta table (LUFS, crest, centroid, bass/mid/high, BPM, key).
   - Acceptance: all deltas display with clear units and sign.
 
-- [ ] T4.3 Add visual comparison charts:
+- [x] T4.3 Add visual comparison charts:
   - Overlay waveform envelope.
   - Side-by-side spectrum bars (bass/mid/high).
   - Optional MFCC similarity gauge.

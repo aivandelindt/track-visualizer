@@ -97,6 +97,10 @@ function cacheElements() {
     "compareTags",
     "compareMasteringOverall",
     "compareMasteringFlags",
+    "compareSpectrumBars",
+    "compareMfccGauge",
+    "compareMfccValue",
+    "compareMfccCaption",
     "compareDeltaBody",
     "compareMasteringRecommendations",
     "compareStatus",
@@ -596,10 +600,88 @@ function clearComparePanel() {
   elements.compareTags.innerHTML = "";
   elements.compareMasteringOverall.textContent = "--";
   elements.compareMasteringFlags.innerHTML = "";
+  elements.compareSpectrumBars.innerHTML =
+    '<div class="empty-state">Run compare to render bass/mid/high bars.</div>';
+  elements.compareMfccValue.textContent = "--";
+  elements.compareMfccGauge.style.setProperty("--mfcc-angle", "0deg");
+  elements.compareMfccCaption.textContent = 'Uses compare component "timbre" from /api/compare.';
   elements.compareMasteringRecommendations.innerHTML = "";
   elements.compareDeltaBody.innerHTML =
     '<tr><td colspan="4" class="empty-state">Run a compare query to view metric deltas.</td></tr>';
   setCompareStatus("Ready to compare tracks.", "idle");
+}
+
+function renderSpectrumBars(leftFeatures, rightFeatures) {
+  const bands = [
+    {
+      label: "Bass <100 Hz",
+      key: "bass_ratio",
+    },
+    {
+      label: "Mid 100-8k Hz",
+      key: "mid_ratio",
+    },
+    {
+      label: "High >8k Hz",
+      key: "high_ratio",
+    },
+  ];
+
+  elements.compareSpectrumBars.innerHTML = bands
+    .map((band) => {
+      const leftValue = Number(leftFeatures?.[band.key]);
+      const rightValue = Number(rightFeatures?.[band.key]);
+      const leftPct = Number.isFinite(leftValue) ? clamp(leftValue, 0, 1) * 100 : 0;
+      const rightPct = Number.isFinite(rightValue) ? clamp(rightValue, 0, 1) * 100 : 0;
+
+      return `
+        <div class="spectrum-row">
+          <div class="spectrum-label">${escapeHtml(band.label)}</div>
+          <div class="spectrum-track">
+            <div class="spectrum-bar spectrum-bar-a">
+              <div class="spectrum-bar-fill" style="width:${leftPct.toFixed(1)}%"></div>
+            </div>
+            <div class="spectrum-meta">
+              <span>Track A</span>
+              <span>${formatMetric(leftValue, 3)}</span>
+            </div>
+          </div>
+          <div class="spectrum-track">
+            <div class="spectrum-bar spectrum-bar-b">
+              <div class="spectrum-bar-fill" style="width:${rightPct.toFixed(1)}%"></div>
+            </div>
+            <div class="spectrum-meta">
+              <span>Track B</span>
+              <span>${formatMetric(rightValue, 3)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function renderMfccGauge(payload) {
+  const timbre = Number(payload?.components?.timbre);
+  if (!Number.isFinite(timbre)) {
+    elements.compareMfccValue.textContent = "n/a";
+    elements.compareMfccGauge.style.setProperty("--mfcc-angle", "0deg");
+    elements.compareMfccCaption.textContent = "MFCC timbre component unavailable in compare payload.";
+    return;
+  }
+
+  const normalized = clamp(timbre, 0, 1);
+  const angle = normalized * 360;
+  elements.compareMfccGauge.style.setProperty("--mfcc-angle", `${angle.toFixed(1)}deg`);
+  elements.compareMfccValue.textContent = `${(normalized * 100).toFixed(1)}%`;
+
+  const hint =
+    normalized >= 0.8
+      ? "High timbre match"
+      : normalized >= 0.6
+        ? "Moderate timbre match"
+        : "Low timbre match";
+  elements.compareMfccCaption.textContent = `${hint} (component: ${normalized.toFixed(3)}).`;
 }
 
 function clearSimilarList() {
@@ -695,6 +777,9 @@ function renderCompareResult(payload) {
   const rightTrack = trackByFile(payload?.right?.file);
   const leftFeatures = comparisonFeatures(leftTrack);
   const rightFeatures = comparisonFeatures(rightTrack);
+
+  renderSpectrumBars(leftFeatures, rightFeatures);
+  renderMfccGauge(payload);
 
   const rows = [
     {

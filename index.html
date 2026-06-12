@@ -217,6 +217,25 @@
               </article>
             </div>
 
+            <div class="compare-visuals">
+              <article class="metric-card compare-visual-card">
+                <div class="metric-label">Spectrum balance A/B</div>
+                <div class="spectrum-bars" id="compareSpectrumBars">
+                  <div class="empty-state">Run compare to render bass/mid/high bars.</div>
+                </div>
+              </article>
+
+              <article class="metric-card compare-visual-card">
+                <div class="metric-label">MFCC timbre similarity</div>
+                <div class="mfcc-gauge" id="compareMfccGauge" aria-label="MFCC similarity gauge">
+                  <div class="mfcc-gauge-ring">
+                    <div class="mfcc-gauge-value" id="compareMfccValue">--</div>
+                  </div>
+                </div>
+                <p class="compare-status" id="compareMfccCaption">Uses compare component "timbre" from /api/compare.</p>
+              </article>
+            </div>
+
             <div class="compare-table-wrap">
               <table class="compare-table">
                 <thead>

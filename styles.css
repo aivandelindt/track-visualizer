@@ -832,6 +832,95 @@ p {
   min-height: 120px;
 }
 
+.compare-visuals {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1.2fr 0.8fr;
+}
+
+.compare-visual-card {
+  display: grid;
+  gap: 10px;
+  min-height: 170px;
+}
+
+.spectrum-bars {
+  display: grid;
+  gap: 10px;
+}
+
+.spectrum-row {
+  display: grid;
+  gap: 8px;
+}
+
+.spectrum-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.spectrum-track {
+  display: grid;
+  gap: 8px;
+}
+
+.spectrum-bar {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.spectrum-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: 999px;
+}
+
+.spectrum-bar-a .spectrum-bar-fill {
+  background: linear-gradient(90deg, rgba(76, 215, 165, 0.35), rgba(76, 215, 165, 0.95));
+}
+
+.spectrum-bar-b .spectrum-bar-fill {
+  background: linear-gradient(90deg, rgba(242, 162, 58, 0.35), rgba(242, 162, 58, 0.95));
+}
+
+.spectrum-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.mfcc-gauge {
+  display: grid;
+  place-items: center;
+}
+
+.mfcc-gauge-ring {
+  width: 122px;
+  height: 122px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at center, rgba(13, 16, 20, 0.95) 0 52%, transparent 53%),
+    conic-gradient(rgba(76, 215, 165, 0.92) var(--mfcc-angle, 0deg), rgba(255, 255, 255, 0.1) 0deg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mfcc-gauge-value {
+  font-family: var(--mono);
+  color: #d5ffef;
+  font-size: 1.08rem;
+}
+
 .compare-table-wrap {
   overflow-x: auto;
   border-radius: 14px;
@@ -1038,6 +1127,7 @@ p {
   .summary-grid,
   .deck-metrics,
   .compare-controls,
+  .compare-visuals,
   .compare-score-row,
   .analysis-toolbar,
   .source-meta-row {
